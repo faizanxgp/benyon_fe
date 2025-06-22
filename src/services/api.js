@@ -179,6 +179,9 @@ export const deleteUser = (data) => api.delete('/keycloak/delete_user', { data }
 
 export const logoutUser = () => api.get('/keycloak/logout_user');
 
+// Replace user role
+export const replaceUserRole = (data) => api.post('/keycloak/replace_user_role', data);
+
 // Retrieve user details from backend
 export const retrieveUserDetails = (username) => 
   api.post('/keycloak/retrieve_user_details', { username });

@@ -1,4 +1,4 @@
-import { createUser, deleteUser, getUsersStatus, getUsername } from '../../../services/api';
+import { createUser, deleteUser, getUsersStatus, getUsername, replaceUserRole } from '../../../services/api';
 // import { getUsersStatus } from '../../../services/api';
 import React, { useEffect, useState, Fragment } from 'react';
 
@@ -662,10 +662,26 @@ const UsersListCompactPage = () => {
                                         <ChangeRoleDropdown
                                             currentRole={item.role}
                                             username={item.username}
-                                            onRoleChange={(newRole) => {
-                                                console.log(`Changing role for ${item.username} from ${item.role} to ${newRole}`);
-                                                alert(`Role will be changed from ${item.role} to ${newRole} for user ${item.name}`);
-                                                // TODO: Implement actual role change API call
+                                            onRoleChange={async (newRole) => {
+                                                if (window.confirm(`Are you sure you want to change role for ${item.name} from ${item.role} to ${newRole}?`)) {
+                                                    try {
+                                                        const response = await replaceUserRole({
+                                                            username: item.username,
+                                                            role: newRole
+                                                        });
+                                                        
+                                                        // Check status code to confirm role change
+                                                        if (response.status === 200) {
+                                                            alert(`Role successfully changed from ${item.role} to ${newRole} for user ${item.name}`);
+                                                            fetchUsers(); // Refresh the users list
+                                                        } else {
+                                                            alert(`Failed to change role. Status: ${response.status}`);
+                                                        }
+                                                    } catch (error) {
+                                                        console.error('Error changing user role:', error);
+                                                        alert(`Failed to change role: ${error.response?.data?.message || error.message}`);
+                                                    }
+                                                }
                                             }}
                                         />
                                     </li>
