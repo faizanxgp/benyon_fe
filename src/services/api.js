@@ -183,8 +183,15 @@ export const api = axios.create({
 
 // Add a request interceptor
 api.interceptors.request.use((config) => {
+  // Update Authorization header with the latest token
+  const currentToken = localStorage.getItem('access_token') || BEARER;
+  if (currentToken) {
+    config.headers.Authorization = `Bearer ${currentToken}`;
+  }
+  
   // Show loading spinner
   if (loadingCallbacks.show) {
+    console.log('API Request started - showing loading spinner:', config.url);
     loadingCallbacks.show();
   }
   
@@ -192,6 +199,7 @@ api.interceptors.request.use((config) => {
 }, (error) => {
   // Hide loading spinner in case of error
   if (loadingCallbacks.hide) {
+    console.log('API Request error - hiding loading spinner');
     loadingCallbacks.hide();
   }
   return Promise.reject(error);
@@ -201,12 +209,14 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use((response) => {
   // Hide loading spinner on successful response
   if (loadingCallbacks.hide) {
+    console.log('API Response success - hiding loading spinner:', response.config.url);
     loadingCallbacks.hide();
   }
   return response;
 }, (error) => {
   // Hide loading spinner on error response
   if (loadingCallbacks.hide) {
+    console.log('API Response error - hiding loading spinner:', error.config?.url);
     loadingCallbacks.hide();
   }
   return Promise.reject(error);

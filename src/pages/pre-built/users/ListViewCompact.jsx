@@ -367,7 +367,6 @@ const UsersListCompactPage = () => {
     const [showCardOptions, setShowCardOptions] = useState(false);
 
     const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showCreateUserDialog, setShowCreateUserDialog] = useState(false);
 
@@ -385,7 +384,6 @@ const UsersListCompactPage = () => {
     });
 
     const fetchUsers = () => {
-    setLoading(true);
     getUsersStatus()
         .then(res => {
         const detail = res.data.detail;
@@ -398,11 +396,9 @@ const UsersListCompactPage = () => {
             status: arr[3].charAt(0).toUpperCase() + arr[3].slice(1), // Fourth element is status (capitalize)
         }));
         setUsers(data);
-        setLoading(false);
         })
         .catch(err => {
         setError('Failed to load users');
-        setLoading(false);
         });
     };
 
@@ -547,7 +543,6 @@ const UsersListCompactPage = () => {
                     </div>
                 </div>
             </div>
-            {loading && <div className="p-4 text-center text-gray-500">Loading...</div>}
             {error && <div className="p-4 text-center text-red-500">{error}</div>}
             <table className="border-collapse w-full border-gray-300 dark:border-gray-900"> 
                 <thead>
