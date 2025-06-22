@@ -603,23 +603,16 @@ const UsersListCompactPage = () => {
                             <td className="py-2 px-2 first:ps-6 last:pe-6 border-b border-gray-300 dark:border-gray-900 text-end max-w-[3.75rem]">
                                 <ul className="relative flex items-center justify-end -me-2">
                                     <li className="bg-gray-50 dark:bg-gray-1000 px-0.5">
-                                        <Tooltip placement="top" content="Wallet">
-                                            <Button.Zoom size="sm">
-                                                <Icon className="text-base/4.5" name="wallet-fill" />
-                                            </Button.Zoom>
-                                        </Tooltip>
-                                    </li>
-                                    <li className="bg-gray-50 dark:bg-gray-1000 px-0.5">
-                                        <Tooltip placement="top" content="Send Email">
-                                            <Button.Zoom size="sm">
-                                                <Icon className="text-base/4.5" name="mail-fill" />
-                                            </Button.Zoom>
-                                        </Tooltip>
-                                    </li>
-                                    <li className="bg-gray-50 dark:bg-gray-1000 px-0.5">
                                         <Tooltip placement="top" content="Suspend">
                                             <Button.Zoom size="sm">
                                                 <Icon className="text-base/4.5" name="user-cross-fill" />
+                                            </Button.Zoom>
+                                        </Tooltip>
+                                    </li>
+                                    <li className="bg-gray-50 dark:bg-gray-1000 px-0.5">
+                                        <Tooltip placement="top" content="Change Role">
+                                            <Button.Zoom size="sm">
+                                                <Icon className="text-base/4.5" name="account-setting" />
                                             </Button.Zoom>
                                         </Tooltip>
                                     </li>
