@@ -313,6 +313,55 @@ const OptionsDropdown = ({className}) => {
   )
 }
 
+const ChangeRoleDropdown = ({className, currentRole, username, onRoleChange}) => {
+    const theme = useTheme();
+    let [dropdownToggle, setDropdownToggle] = useState()
+    let [dropdownContent, setDropdownContent] = useState()
+    let { styles, attributes } = usePopper(dropdownToggle, dropdownContent, {
+        placement : theme.direction === "rtl" ? "bottom-start" : "bottom-end",
+        modifiers: [
+            {name: 'offset', options: { offset: theme.direction === "rtl" ? [14, -8] : [-14, -8]}},
+            {name: 'preventOverflow', options: { padding: 8 }},
+        ],
+    })
+
+    // Determine the alternative role
+    const getAlternativeRole = (role) => {
+        return role === 'admin' ? 'standard' : 'admin';
+    };
+
+    const alternativeRole = getAlternativeRole(currentRole);
+
+    return (
+        <Menu as="div" className={`inline-flex relative ${className ? className : ''}`}>
+            {({ open }) => (
+                <>
+                    <Menu.Button as='div' className={`inline-flex${open ? ' active' : ''}`} ref={setDropdownToggle}>
+                        <Tooltip placement="top" content="Change Role">
+                            <Button.Zoom size="sm">
+                                <Icon className="text-base/4.5" name="account-setting" />
+                            </Button.Zoom>
+                        </Tooltip>
+                    </Menu.Button>
+                    <Menu.Items modal={false} ref={setDropdownContent} style={styles.popper} {...attributes.popper} className="absolute border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 rounded-md shadow z-[1000] min-w-[180px]">
+                        <ul className="py-2">
+                            <li>
+                                <Menu.Item as="button"
+                                    className="w-full relative px-5 py-2.5 flex items-center rounded-[inherit] text-xs leading-5 font-medium text-primary-600 hover:bg-slate-50 hover:dark:bg-gray-900 transition-all duration-300"
+                                    onClick={() => onRoleChange && onRoleChange(alternativeRole)}
+                                >
+                                    <Icon className="text-start text-lg leading-none w-7 opacity-80" name="account-setting" />
+                                    <span>Change to {alternativeRole}</span>
+                                </Menu.Item>
+                            </li>
+                        </ul>
+                    </Menu.Items>
+                </>
+            )}
+        </Menu>
+    )
+}
+
 const UsersListCompactPage = () => {
     const [showSearchForm, setShowSearchForm] = useState(false);
     const [showCardOptions, setShowCardOptions] = useState(false);
@@ -610,11 +659,15 @@ const UsersListCompactPage = () => {
                                         </Tooltip>
                                     </li>
                                     <li className="bg-gray-50 dark:bg-gray-1000 px-0.5">
-                                        <Tooltip placement="top" content="Change Role">
-                                            <Button.Zoom size="sm">
-                                                <Icon className="text-base/4.5" name="account-setting" />
-                                            </Button.Zoom>
-                                        </Tooltip>
+                                        <ChangeRoleDropdown
+                                            currentRole={item.role}
+                                            username={item.username}
+                                            onRoleChange={(newRole) => {
+                                                console.log(`Changing role for ${item.username} from ${item.role} to ${newRole}`);
+                                                alert(`Role will be changed from ${item.role} to ${newRole} for user ${item.name}`);
+                                                // TODO: Implement actual role change API call
+                                            }}
+                                        />
                                     </li>
                                     {/* <li>
                                         <ActionDropdown />
