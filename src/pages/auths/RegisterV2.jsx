@@ -156,9 +156,8 @@ const RegisterV2Page = () => {
                                     <LanguageDropdown />
                                 </li>
                             </ul>
-                            </div>
-                            <div className="w-full lg:w-1/2 p-2">
-                                <p className="text-slate-400 text-center lg:text-start text-sm/4">&copy; 2025 DashWind. All Rights Reserved.</p>
+                            </div>                            <div className="w-full lg:w-1/2 p-2">
+                                <p className="text-slate-400 text-center lg:text-start text-sm/4">&copy; 2025 Beynon Sports. Built by <a href="https://www.innovativelabs.us" target="_blank" rel="noopener noreferrer" className="text-primary-500 hover:text-primary-600 transition-all duration-300">Innovative Labs</a>.</p>
                             </div>
                         </div>
                     </div>

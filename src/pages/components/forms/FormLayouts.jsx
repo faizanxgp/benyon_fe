@@ -234,7 +234,7 @@ const FormLayoutsPage = () => {
                         <div className="w-full lg:w-7/12 p-2">
                             <Form.Group>
                                 <Input.Wrap>
-                                    <Input id="wsSiteCopyright" defaultValue="&copy; 2023, DashWind. All Rights Reserved." />
+                                    <Input id="wsSiteCopyright" defaultValue="&copy; 2025 Beynon Sports. Built by Innovative Labs." />
                                 </Input.Wrap>
                             </Form.Group>
                         </div>
