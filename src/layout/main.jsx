@@ -4,13 +4,22 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "./sidebar";
 import Header from "./header";
 import Footer from "./footer";
+import { LoadingProvider, useLoading } from "./context/LoadingContext";
+import GlobalLoadingSpinner from "./components/GlobalLoadingSpinner";
+import { setLoadingCallbacks } from "../services/api";
 
 
-const Layout = ({title, container, ...props}) => {
+const LayoutContent = ({title, container, ...props}) => {
+  const { showLoading, hideLoading } = useLoading();
 
   const [sidebarMobile, setSidebarMobile] = useState(false);
   const [sidebarVisibility, setSidebarVisibility] = useState(false);
   const [sidebarCompact, setSidebarCompact] = useState(false);
+
+  // Set up loading callbacks for API calls
+  useEffect(() => {
+    setLoadingCallbacks(showLoading, hideLoading);
+  }, [showLoading, hideLoading]);
 
   useEffect(() => {
     sidebarVisibility ? document.body.classList.add('overflow-hidden') : document.body.classList.remove('overflow-hidden');
@@ -52,7 +61,16 @@ const Layout = ({title, container, ...props}) => {
               <Footer />
           </div>
       </div>
+      <GlobalLoadingSpinner />
     </>
+  );
+};
+
+const Layout = (props) => {
+  return (
+    <LoadingProvider>
+      <LayoutContent {...props} />
+    </LoadingProvider>
   );
 };
 export default Layout;

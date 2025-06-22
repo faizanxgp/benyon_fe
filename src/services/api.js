@@ -1,5 +1,17 @@
 import axios from 'axios';
 
+// Loading management
+let loadingCallbacks = {
+  show: null,
+  hide: null
+};
+
+// Function to set loading callbacks from the context
+export const setLoadingCallbacks = (showCallback, hideCallback) => {
+  loadingCallbacks.show = showCallback;
+  loadingCallbacks.hide = hideCallback;
+};
+
 // Original token (commented out for reference)
 // const BEARER = 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtRHgzSGkwcU44Y24tSmVyNUNfTUVGc0NUUUd3RVVLZHRHVi1ITmptS2NjIn0.eyJleHAiOjE3NTA1OTAwOTgsImlhdCI6MTc1MDU3MjA5OCwianRpIjoib25ydHJvOmEwM2Y4Mzg3LTk2ODYtNGU1OS05YTBhLTQ3NGQxMmViZmY0ZiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvdGVhbV9vbmxpbmUiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZjAxNDU3MTktZTc2NS00ZDE1LTgxOTktODYyM2I5YWZjNWVhIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYmVueW9uX2ZlIiwic2lkIjoiNDcwYjQyMWMtNWJhZi00ZGM0LWI5YmItNzkyZmFkYmVkY2VmIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLXRlYW1fb25saW5lIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJiZW55b25fZmUiOnsicm9sZXMiOlsiYWRtaW4iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6Ikhhc3NhYW4gUWF5eXVtIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiaGFzc2FhbnFAZ21haWwuY29tIiwiZ2l2ZW5fbmFtZSI6Ikhhc3NhYW4iLCJmYW1pbHlfbmFtZSI6IlFheXl1bSIsImVtYWlsIjoiaGFzc2FhbnFAZ21haWwuY29tIn0.St1Wb53NR6k1ZbIOstVAZ7KF4kztqeJ0Au0CXcO7PHlu8KlTduzKBVq2hUju2Mq-kDZlE9toPgfc0x0oDPo1ISSpKHOQ5AuXeu5NY1HWtUqXUhH_0JlYO8T6YqXseTKVUKUgqCmACmxvWw0SjJ1CL2tp7UpUoqXMHL03mBhwzOvd5tHY__dxWpHYztEkVbuFe3lrrjvHok8wTHdScre4li7347WNgfV4P2LyfJITyTst2ooAudbC2Ka4lmTqmghBRFRmuH5EKOSq2Tk2VpOREz86tS2joL0AaJqBAMVRdMvqsRdlFJuhIMcp-hWf9tiBf2m1wv5Uk9wIwpL_0HkZIA';
 
@@ -167,6 +179,37 @@ export const api = axios.create({
   headers: {
     Authorization: `Bearer ${BEARER}`
   }
+});
+
+// Add a request interceptor
+api.interceptors.request.use((config) => {
+  // Show loading spinner
+  if (loadingCallbacks.show) {
+    loadingCallbacks.show();
+  }
+  
+  return config;
+}, (error) => {
+  // Hide loading spinner in case of error
+  if (loadingCallbacks.hide) {
+    loadingCallbacks.hide();
+  }
+  return Promise.reject(error);
+});
+
+// Add a response interceptor
+api.interceptors.response.use((response) => {
+  // Hide loading spinner on successful response
+  if (loadingCallbacks.hide) {
+    loadingCallbacks.hide();
+  }
+  return response;
+}, (error) => {
+  // Hide loading spinner on error response
+  if (loadingCallbacks.hide) {
+    loadingCallbacks.hide();
+  }
+  return Promise.reject(error);
 });
 
 // Users
