@@ -41,8 +41,7 @@ const Sidebar = ({mobile, visibility, setVisibility, compact, setCompact }) => {
             </div>
             <div className="relative flex flex-shrink-0">
                 <Link to="/home" className="relative inline-block transition-opacity duration-300 h-9 group-[&.is-compact:not(.has-hover)]/sidebar:opacity-0">
-                    <img className="h-full opacity-0 dark:opacity-100" src="/logo.png" srcSet="/logo2x.png 2x" alt="logo" />
-                    <img className="h-full opacity-100 dark:opacity-0 absolute start-0 top-0" src="/logo-dark.png" srcSet="/logo-dark2x.png 2x" alt="logo" />
+                    <img className="h-full" src="/beynon.png" alt="Benyon Sports" />
                 </Link>
             </div>
         </div>
