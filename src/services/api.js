@@ -1,0 +1,253 @@
+import axios from 'axios';
+
+// Original token (commented out for reference)
+// const BEARER = 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtRHgzSGkwcU44Y24tSmVyNUNfTUVGc0NUUUd3RVVLZHRHVi1ITmptS2NjIn0.eyJleHAiOjE3NTA1OTAwOTgsImlhdCI6MTc1MDU3MjA5OCwianRpIjoib25ydHJvOmEwM2Y4Mzg3LTk2ODYtNGU1OS05YTBhLTQ3NGQxMmViZmY0ZiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvdGVhbV9vbmxpbmUiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZjAxNDU3MTktZTc2NS00ZDE1LTgxOTktODYyM2I5YWZjNWVhIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYmVueW9uX2ZlIiwic2lkIjoiNDcwYjQyMWMtNWJhZi00ZGM0LWI5YmItNzkyZmFkYmVkY2VmIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLXRlYW1fb25saW5lIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJiZW55b25fZmUiOnsicm9sZXMiOlsiYWRtaW4iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6Ikhhc3NhYW4gUWF5eXVtIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiaGFzc2FhbnFAZ21haWwuY29tIiwiZ2l2ZW5fbmFtZSI6Ikhhc3NhYW4iLCJmYW1pbHlfbmFtZSI6IlFheXl1bSIsImVtYWlsIjoiaGFzc2FhbnFAZ21haWwuY29tIn0.St1Wb53NR6k1ZbIOstVAZ7KF4kztqeJ0Au0CXcO7PHlu8KlTduzKBVq2hUju2Mq-kDZlE9toPgfc0x0oDPo1ISSpKHOQ5AuXeu5NY1HWtUqXUhH_0JlYO8T6YqXseTKVUKUgqCmACmxvWw0SjJ1CL2tp7UpUoqXMHL03mBhwzOvd5tHY__dxWpHYztEkVbuFe3lrrjvHok8wTHdScre4li7347WNgfV4P2LyfJITyTst2ooAudbC2Ka4lmTqmghBRFRmuH5EKOSq2Tk2VpOREz86tS2joL0AaJqBAMVRdMvqsRdlFJuhIMcp-hWf9tiBf2m1wv5Uk9wIwpL_0HkZIA';
+
+// Dynamic bearer token that can be updated after login
+let BEARER = localStorage.getItem('access_token') || 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtRHgzSGkwcU44Y24tSmVyNUNfTUVGc0NUUUd3RVVLZHRHVi1ITmptS2NjIn0.eyJleHAiOjE3NTA1OTAwOTgsImlhdCI6MTc1MDU3MjA5OCwianRpIjoib25ydHJvOmEwM2Y4Mzg3LTk2ODYtNGU1OS05YTBhLTQ3NGQxMmViZmY0ZiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvdGVhbV9vbmxpbmUiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZjAxNDU3MTktZTc2NS00ZDE1LTgxOTktODYyM2I5YWZjNWVhIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYmVueW9uX2ZlIiwic2lkIjoiNDcwYjQyMWMtNWJhZi00ZGM0LWI5YmItNzkyZmFkYmVkY2VmIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLXRlYW1fb25saW5lIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJiZW55b25fZmUiOnsicm9sZXMiOlsiYWRtaW4iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6Ikhhc3NhYW4gUWF5eXVtIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiaGFzc2FhbnFAZ21haWwuY29tIiwiZ2l2ZW5fbmFtZSI6Ikhhc3NhYW4iLCJmYW1pbHlfbmFtZSI6IlFheXl1bSIsImVtYWlsIjoiaGFzc2FhbnFAZ21haWwuY29tIn0.St1Wb53NR6k1ZbIOstVAZ7KF4kztqeJ0Au0CXcO7PHlu8KlTduzKBVq2hUju2Mq-kDZlE9toPgfc0x0oDPo1ISSpKHOQ5AuXeu5NY1HWtUqXUhH_0JlYO8T6YqXseTKVUKUgqCmACmxvWw0SjJ1CL2tp7UpUoqXMHL03mBhwzOvd5tHY__dxWpHYztEkVbuFe3lrrjvHok8wTHdScre4li7347WNgfV4P2LyfJITyTst2ooAudbC2Ka4lmTqmghBRFRmuH5EKOSq2Tk2VpOREz86tS2joL0AaJqBAMVRdMvqsRdlFJuhIMcp-hWf9tiBf2m1wv5Uk9wIwpL_0HkZIA';
+
+// Function to update the bearer token
+export const updateBearerToken = (newToken) => {
+  BEARER = newToken;
+  // Store token in localStorage for persistence
+  localStorage.setItem('access_token', newToken);
+  // Update the authorization header for all future requests
+  api.defaults.headers.Authorization = `Bearer ${newToken}`;
+};
+
+// Function to clear the bearer token (for logout)
+export const clearBearerToken = () => {
+  BEARER = '';
+  localStorage.removeItem('access_token');
+  api.defaults.headers.Authorization = '';
+};
+
+// Function to decode JWT token
+export const decodeJWT = (token) => {
+  try {
+    if (!token) return null;
+    
+    // JWT tokens have 3 parts separated by dots
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      console.error('Invalid JWT token format');
+      return null;
+    }
+    
+    // Decode the payload (second part)
+    const payload = JSON.parse(atob(parts[1]));
+    return payload;
+  } catch (error) {
+    console.error('Error decoding JWT:', error);
+    return null;
+  }
+};
+
+// Function to get user roles from JWT token
+export const getUserRoles = () => {
+  const token = localStorage.getItem('access_token') || BEARER;
+  if (!token) return [];
+  
+  const decoded = decodeJWT(token);
+  if (!decoded) return [];
+  
+  // Extract benyon_fe roles with proper error handling
+  try {
+    const benyonFeRoles = decoded.resource_access?.benyon_fe?.roles || [];
+    return Array.isArray(benyonFeRoles) ? benyonFeRoles : [];
+  } catch (error) {
+    console.error('Error extracting roles from JWT:', error);
+    return [];
+  }
+};
+
+// Function to check if user has admin role
+export const isAdmin = () => {
+  const roles = getUserRoles();
+  return roles.includes('admin');
+};
+
+// Function to get dashboard heading based on user role
+export const getDashboardHeading = () => {
+  return isAdmin() ? 'Admin Dashboard' : 'Dashboard';
+};
+
+// Function to get user's name from JWT token
+export const getUserName = () => {
+  const token = localStorage.getItem('access_token') || BEARER;
+  if (!token) return 'User';
+  
+  const decoded = decodeJWT(token);
+  if (!decoded) return 'User';
+  
+  // Extract name from JWT payload
+  return decoded.name || decoded.preferred_username || 'User';
+};
+
+// Function to get user's username from JWT token
+export const getUsername = () => {
+  const token = localStorage.getItem('access_token') || BEARER;
+  if (!token) return '';
+  
+  const decoded = decodeJWT(token);
+  if (!decoded) return '';
+  
+  // Extract username (typically preferred_username in Keycloak)
+  return decoded.preferred_username || decoded.sub || '';
+};
+
+// Function to get user's role label for display
+export const getUserRoleLabel = () => {
+  const roles = getUserRoles();
+  
+  if (roles.includes('admin')) {
+    return 'admin';
+  } else if (roles.includes('standard')) {
+    return 'standard';
+  }
+  
+  // Default fallback
+  return 'user';
+};
+
+// Function to validate JWT token (check if it's not expired)
+export const isTokenValid = (token) => {
+  const decoded = decodeJWT(token);
+  if (!decoded) return false;
+  
+  const currentTime = Date.now() / 1000;
+  return decoded.exp > currentTime;
+};
+
+// Function to check if user is authenticated
+export const isAuthenticated = () => {
+  const token = localStorage.getItem('access_token');
+  if (!token) return false;
+  
+  // Use our improved token validation
+  if (!isTokenValid(token)) {
+    // Token expired or invalid, clear it
+    clearBearerToken();
+    return false;
+  }
+  
+  return true;
+};
+
+// Function to login to Keycloak
+export const loginToKeycloak = async (username, password) => {
+  try {
+    const formData = new URLSearchParams();
+    formData.append('grant_type', 'password');
+    formData.append('client_id', 'benyon_fe');
+    formData.append('scope', 'email openid');
+    formData.append('username', username);
+    formData.append('password', password);
+
+    const response = await axios.post(
+      'http://localhost:8080/realms/team_online/protocol/openid-connect/token',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Option A: Create an instance with header pre-configured
+export const api = axios.create({
+  baseURL: 'http://localhost:5000', // adjust as needed
+  timeout: 10000,
+  headers: {
+    Authorization: `Bearer ${BEARER}`
+  }
+});
+
+// Users
+export const getUsersStatus = () =>
+  api.get('/keycloak/users_status');
+
+export const createUser = (data) => api.post('/keycloak/create_user', data);
+
+export const deleteUser = (data) => api.delete('/keycloak/delete_user', { data });
+
+export const logoutUser = () => api.get('/keycloak/logout_user');
+
+// Retrieve user details from backend
+export const retrieveUserDetails = (username) => 
+  api.post('/keycloak/retrieve_user_details', { username });
+
+// Files
+export const getDirContents = (path = "/") => {
+  const formData = new FormData();
+  formData.append("path", path);
+  return api.post("/files/dir_contents", formData);
+};
+
+/**
+ * LOGOUT FLOW DOCUMENTATION
+ * 
+ * Complete logout process includes:
+ * 1. API call to backend: GET /keycloak/logout_user (with Bearer token)
+ * 2. Clear client-side token from localStorage
+ * 3. Clear Authorization header from axios instance
+ * 4. Dispatch 'userLogout' event to update UI components
+ * 5. Navigate user to login page
+ * 6. Sidebar heading automatically resets to 'Dashboard'
+ * 
+ * The logout function handles errors gracefully - if backend call fails,
+ * client-side cleanup still occurs to ensure user is logged out locally.
+ */
+
+// Function to logout user
+export const logout = async () => {
+  try {
+    // Make API call to backend logout endpoint
+    await logoutUser();
+    console.log('User logged out successfully from backend');
+  } catch (error) {
+    console.error('Backend logout error:', error);
+    // Continue with client-side cleanup even if backend call fails
+  } finally {
+    // Always clear client-side token and update UI
+    clearBearerToken();
+    
+    // Dispatch logout event to update UI components
+    window.dispatchEvent(new CustomEvent('userLogout'));
+  }
+};
+
+// Function to set up automatic token expiry monitoring
+export const setupTokenExpiryMonitoring = () => {
+  // Check token expiry every 5 minutes
+  const EXPIRY_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes in milliseconds
+  
+  const checkTokenExpiry = () => {
+    const token = localStorage.getItem('access_token');
+    if (token && !isTokenValid(token)) {
+      console.log('Token expired, clearing authentication');
+      clearBearerToken();
+      
+      // Dispatch logout event to update UI
+      window.dispatchEvent(new CustomEvent('userLogout'));
+      
+      // Only redirect if we're not already on the login page
+      const currentPath = window.location.pathname;
+      if (!currentPath.includes('/auths/')) {
+        window.location.href = '/auths/auth-login-v2';
+      }
+    }
+  };
+  
+  // Start monitoring
+  const intervalId = setInterval(checkTokenExpiry, EXPIRY_CHECK_INTERVAL);
+  
+  // Return cleanup function
+  return () => clearInterval(intervalId);
+};
