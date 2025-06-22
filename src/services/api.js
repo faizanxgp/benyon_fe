@@ -239,6 +239,12 @@ export const replaceUserRole = (data) => api.post('/keycloak/replace_user_role',
 export const retrieveUserDetails = (username) => 
   api.post('/keycloak/retrieve_user_details', { username });
 
+// Change user password
+export const changeUserPassword = (data) => api.post('/keycloak/change_password', data);
+
+// Placeholder for password verification API - to be implemented by backend
+export const verifyPassword = (data) => api.post('/keycloak/verify_password', data);
+
 // Files
 export const getDirContents = (path = "/") => {
   const formData = new FormData();

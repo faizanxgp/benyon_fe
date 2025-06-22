@@ -69,6 +69,7 @@ import FaqsPage from "../pages/misc/Faqs";
 import TermsPolicyPage from "../pages/misc/TermsPolicy";
 import RegularV1Page from "../pages/misc/RegularV1";
 import RegularV2Page from "../pages/misc/RegularV2";
+import TroubleshootLogin from "../pages/misc/TroubleshootLogin";
 
 import ComponentList from "../pages/components";
 import NioIconsPage from "../pages/components/NioIcons";
@@ -113,7 +114,7 @@ import CardWidgetsPage from "../pages/components/widgets/CardsWidgets";
 import ChartWidgetsPage from "../pages/components/widgets/ChartsWidgets";
 import RatingWidgetsPage from "../pages/components/widgets/RatingsWidgets";
 
-import ThemeProvider from "../layout/context";
+import ThemeProvider from "../layout/context/ThemeContext";
 
 import { useLocation } from "react-router";
 
@@ -203,6 +204,7 @@ function Router() {
                             <Route path="terms-policy" element={<ProtectedRoute><TermsPolicyPage /></ProtectedRoute>} />
                             <Route path="regular-v1" element={<ProtectedRoute><RegularV1Page /></ProtectedRoute>} />
                             <Route path="regular-v2" element={<ProtectedRoute><RegularV2Page /></ProtectedRoute>} />
+                            <Route path="troubleshoot-login" element={<TroubleshootLogin />} />
 
                             <Route path="components">
                                 <Route index element={<ProtectedRoute><ComponentList /></ProtectedRoute>} />
