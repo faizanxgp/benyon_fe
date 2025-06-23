@@ -204,7 +204,7 @@ const FormLayoutsPage = () => {
                         <div className="w-full lg:w-7/12 p-2">
                             <Form.Group>
                                 <Input.Wrap>
-                                    <Input id="wsSiteName" defaultValue="DashWind Admin Template" />
+                                    <Input id="wsSiteName" defaultValue="Beynon Sports Admin Template" />
                                 </Input.Wrap>
                             </Form.Group>
                         </div>

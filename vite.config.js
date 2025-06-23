@@ -6,5 +6,8 @@ export default defineConfig({
   plugins: [react()],
   build: {
     target: 'esnext'
+  },
+  server: {
+    allowedHosts: ['muskox-absolute-radically.ngrok-free.app']
   }
 })

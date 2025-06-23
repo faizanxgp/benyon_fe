@@ -1,10 +1,10 @@
 export const projects = [
     {
         id: "pid01",
-        title: "DashWind Development",
+        title: "Beynon Sports Development",
         theme: "purple",
         client: "Softnio",
-        description: "Design and develop the DashWind template for Envato Marketplace.",
+        description: "Design and develop the Beynon Sports template for Envato Marketplace.",
         tasks: "3",
         progress: "93.5%",
         team:[
@@ -100,10 +100,10 @@ export const projects = [
     },
     {
         id: "pid06",
-        title: "DashWind Development",
+        title: "Beynon Sports Development",
         theme: "purple",
         client: "Softnio",
-        description: "Design and develop the DashWind template for Envato Marketplace.",
+        description: "Design and develop the Beynon Sports template for Envato Marketplace.",
         tasks: "3",
         progress: "93.5%",
         team:[

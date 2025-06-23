@@ -78,14 +78,12 @@ const ForgotV2Page = () => {
                         <h5 className="text-xl font-heading font-bold -tracking-snug text-slate-700 dark:text-white leading-tighter mb-2">Reset password</h5>
                         <p className="text-sm leading-6 text-slate-400">If you forgot your password, well, then we’ll email you instructions to reset your password.</p>
                         </div>
-                        <form action="#">
-                            <Form.Group>
-                                <Form.Label className="flex justify-between items-center mb-2" htmlFor="emailAddress">
+                        <form action="#">                            <Form.Group>
+                                <Form.Label className="mb-2" htmlFor="emailAddress">
                                     <span>Email </span>
-                                    <a href="#link" onClick={(e)=> e.preventDefault()} className="inline-flex text-xs leading-none whitespace-nowrap transition-all duration-300 font-medium font-body text-primary-500 hover:text-primary-600">Need Help?</a>
                                 </Form.Label>
                                 <Input.Wrap>
-                                <Input id="emailAddress" placeholder="Enter your email address or username" autoComplete="off" size="lg" />
+                                <Input id="emailAddress" placeholder="Enter your email address" autoComplete="off" size="lg" />
                                 </Input.Wrap>
                             </Form.Group>
                             <Form.Group>
