@@ -1,4 +1,4 @@
-import { getDirContents } from '../../../services/api';
+import { getDirContents, isAdmin } from '../../../services/api';
 
 import React,{useState, useEffect, Fragment} from 'react'
 import Aside from './Aside';
@@ -317,6 +317,7 @@ const FileManagerPage = () => {
     const [currentPath, setCurrentPath] = useState("/");
     const [files, setFiles] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [userIsAdmin, setUserIsAdmin] = useState(false);
 
     // const files = [
     //     {
@@ -468,6 +469,11 @@ const FileManagerPage = () => {
             .finally(() => setLoading(false));
     }, [currentPath]);
 
+    // Check admin status on component mount
+    useEffect(() => {
+        setUserIsAdmin(isAdmin());
+    }, []);
+
   return (
     <>
         <Head title="File Manager" />
@@ -475,7 +481,7 @@ const FileManagerPage = () => {
             <div className="relative flex">
                 <Aside  show={pageAside} setShow={setPageAside} />
                 <div className="flex-grow">
-                    <Header showUploadModal={showUploadModal} setShowUploadModal={setShowUploadModal} />
+                    <Header showUploadModal={showUploadModal} setShowUploadModal={setShowUploadModal} userIsAdmin={userIsAdmin} />
                     <div className="h-full max-h-full overflow-auto py-4.5 px-5 sm:py-5 lg:p-7">
                         <div className="pb-4">
                             <div className="relative flex items-center justify-between">
@@ -502,9 +508,11 @@ const FileManagerPage = () => {
                                             <Icon className="text-xl/none text-slate-400 dark:text-slate-300" name="search"></Icon>
                                         </Button.Zoom>
                                     </li>
-                                    <li>
-                                        <AddDropdown setShowUploadModal={setShowUploadModal} />
-                                    </li>
+                                    {userIsAdmin && (
+                                        <li>
+                                            <AddDropdown setShowUploadModal={setShowUploadModal} />
+                                        </li>
+                                    )}
                                     <li>
                                         <Button.Zoom size="rg" onClick={()=> {
                                             setPageAside(!pageAside);
