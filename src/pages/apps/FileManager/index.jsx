@@ -208,55 +208,7 @@ const AddDropdown = ({className, setShowUploadModal}) => {
   )
 }
 
-const FilterDropdown = ({className, icon, textClassName}) => {
-    const theme = useTheme();
-    let [dropdownToggle, setDropdownToggle] = useState()
-    let [dropdownContent, setDropdownContent] = useState()
-    let { styles, attributes } = usePopper(dropdownToggle, dropdownContent, {
-        placement : theme.direction === "rtl" ? "bottom-end" : "bottom-start",
-        modifiers: [
-            {name: 'offset', options: { offset: [0, 4]}},
-            {name: 'preventOverflow', options: { padding: 8 }},
-        ],
-    })
 
-  return (
-    <Menu as="div" className={`inline-flex relative ${className ? className : ''}`}>
-        {({ open }) => (
-            <>
-                <Menu.Button as='div' className={`inline-flex${open ? ' active' : ''}`} ref={setDropdownToggle}>
-                    <button className="inline-flex items-center">
-                        <span className={`me-1 ${textClassName}`}>Last Opened</span>
-                        <Icon className="text-base/4.5" name={icon}></Icon>
-                    </button>
-                </Menu.Button>
-                <Menu.Items modal={false} ref={setDropdownContent} style={styles.popper} {...attributes.popper} className="absolute border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 rounded-md shadow z-[1000] min-w-[150px]">
-                    <ul className="py-2">
-                        <li className="group active">
-                            <Menu.Item as="button" className="w-full relative px-5 py-2.5 flex items-center rounded-[inherit] text-xs leading-5 font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 hover:bg-slate-50 hover:dark:bg-gray-900 transition-all duration-300">
-                                <span>Last Opened</span>
-                                <em className="hidden group-[.active]:block text-xs font-medium leading-none absolute top-1/2 end-4 -translate-y-1/2 ni ni-check-thick"></em>
-                            </Menu.Item>
-                        </li>
-                        <li className="group">
-                            <Menu.Item as="button" className="w-full relative px-5 py-2.5 flex items-center rounded-[inherit] text-xs leading-5 font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 hover:bg-slate-50 hover:dark:bg-gray-900 transition-all duration-300">
-                                <span>Name</span>
-                                <em className="hidden group-[.active]:block text-xs font-medium leading-none absolute top-1/2 end-4 -translate-y-1/2 ni ni-check-thick"></em>
-                            </Menu.Item>
-                        </li>
-                        <li className="group">
-                            <Menu.Item as="button" className="w-full relative px-5 py-2.5 flex items-center rounded-[inherit] text-xs leading-5 font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 hover:bg-slate-50 hover:dark:bg-gray-900 transition-all duration-300">
-                                <span>Size</span>
-                                <em className="hidden group-[.active]:block text-xs font-medium leading-none absolute top-1/2 end-4 -translate-y-1/2 ni ni-check-thick"></em>
-                            </Menu.Item>
-                        </li>
-                    </ul>
-                </Menu.Items>
-            </>
-        )}
-    </Menu>
-  )
-}
 
 const OrderedDropdown = ({className, icon, textClassName}) => {
     const theme = useTheme();
@@ -583,8 +535,7 @@ const FileManagerPage = () => {
                         
                         <div className="mb-10 last:mb-0">
                             <Tab.Group>
-                                <div className="pb-3 relative flex justify-between items-center">
-                                    <h6 className="font-heading font-bold text-base/tighter -tracking-snug text-slate-700 dark:text-white">Browse Files</h6>
+                                <div className="pb-3 relative flex justify-end items-center">
                                     <Tab.List as="ul" className="tab-nav flex items-center gap-4">
                                         <li className="tab-item">
                                             <Tab className="tab-toggle flex items-center justify-center h-6 w-6 text-slate-400 ui-selected:text-primary-600 hover:text-slate-700 dark:text-white transition-all duration-300 outline-none">
@@ -605,8 +556,7 @@ const FileManagerPage = () => {
                                 </div>
                                 <Tab.Panels className="tab-content">
                                     <Tab.Panel className="tab-panel">
-                                        <div className="flex items-center justify-between gap-3">
-                                            <FilterDropdown icon="caret-down-fill" />
+                                        <div className="flex items-center justify-end gap-3">
                                             <BulkActionDropdown className="dropdown" setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} />
                                         </div>
                                         <div className="grid grid-flow-dense grid-cols-12 gap-4">
@@ -686,8 +636,7 @@ const FileManagerPage = () => {
                                         </div>
                                     </Tab.Panel>
                                     <Tab.Panel className="tab-panel">
-                                        <div className="flex items-center justify-between gap-3">
-                                            <FilterDropdown icon="caret-down-fill" />
+                                        <div className="flex items-center justify-end gap-3">
                                             <BulkActionDropdown className="dropdown" setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} />
                                         </div>
                                         <div className="mb-10 last:mb-0">
@@ -766,9 +715,6 @@ const FileManagerPage = () => {
                                             <div className="flex items-center">
                                                 <div className="flex-grow ">
                                                     <OrderedDropdown />
-                                                </div>
-                                                <div className="w-3/12 hidden sm:block">
-                                                    <FilterDropdown icon="arrow-long-down" textClassName="text-sm font-medium" />
                                                 </div>
                                                 <div className="w-3/12 hidden md:block"><div className="font-medium text-sm">Members</div></div>
                                                 <div className="flex-shrink w-[60px] pe-4 text-end">
