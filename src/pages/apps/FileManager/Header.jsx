@@ -26,19 +26,13 @@ const Header = ({setShowUploadModal, userIsAdmin = false}) => {
     const searchInputRef = useRef(null);
     const searchContainerRef = useRef(null);
 
-    // Handle search input change with debouncing
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            if (searchQuery.trim().length > 2) {
-                performSearch(searchQuery.trim());
-            } else {
-                setSearchResults([]);
-                setShowSearchResults(false);
-            }
-        }, 300); // 300ms debounce
-
-        return () => clearTimeout(timeoutId);
-    }, [searchQuery]);
+    // Handle Enter key press for search
+    const handleSearchKeyDown = (e) => {
+        if (e.key === 'Enter' && searchQuery.trim().length > 0) {
+            e.preventDefault();
+            performSearch(searchQuery.trim());
+        }
+    };
 
     // Perform search API call
     const performSearch = async (query) => {
@@ -85,9 +79,17 @@ const Header = ({setShowUploadModal, userIsAdmin = false}) => {
                 ref={searchInputRef}
                 type="text" 
                 className="block w-full box-border text-sm leading-4.5 px-2 py-2 h-9 text-slate-700 dark:text-white placeholder-slate-300 bg-white dark:bg-gray-950 border-0 shadow-none focus:outline-offset-0 focus:outline-0 focus:ring-0 focus:ring-offset-0 disabled:bg-slate-50 disabled:dark:bg-slate-950 disabled:cursor-not-allowed rounded transition-all" 
-                placeholder="Search files, folders" 
+                placeholder="Search files, folders (Press Enter to search)" 
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    // Clear results when query is cleared
+                    if (e.target.value.trim().length === 0) {
+                        setSearchResults([]);
+                        setShowSearchResults(false);
+                    }
+                }}
+                onKeyDown={handleSearchKeyDown}
                 onFocus={() => {
                     if (searchResults.length > 0) {
                         setShowSearchResults(true);
@@ -123,7 +125,7 @@ const Header = ({setShowUploadModal, userIsAdmin = false}) => {
             )}
             
             {/* No Results Message */}
-            {showSearchResults && searchResults.length === 0 && searchQuery.trim().length > 2 && !searchLoading && (
+            {showSearchResults && searchResults.length === 0 && !searchLoading && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-md shadow-lg z-[1000]">
                     <div className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 text-center">
                         No files found for "{searchQuery}"
