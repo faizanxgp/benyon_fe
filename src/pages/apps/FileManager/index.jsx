@@ -479,7 +479,21 @@ const FileManagerPage = () => {
                     <div className="h-full max-h-full overflow-auto py-4.5 px-5 sm:py-5 lg:p-7">
                         <div className="pb-4">
                             <div className="relative flex items-center justify-between">
-                                <h3 className="font-heading font-bold text-2xl/tighter tracking-tight text-slate-700 dark:text-white">Files</h3>
+                                <div className="flex items-center gap-3">
+                                    {currentPath !== "/" && (
+                                        <Button.Zoom 
+                                            size="rg" 
+                                            onClick={() => {
+                                                const parentPath = currentPath.split("/").slice(0, -1).join("/") || "/";
+                                                setCurrentPath(parentPath);
+                                            }}
+                                            title="Go back to parent directory"
+                                        >
+                                            <Icon className="text-xl/none text-slate-400 dark:text-slate-300 rtl:scale-x-100" name="arrow-left" />
+                                        </Button.Zoom>
+                                    )}
+                                    <h3 className="font-heading font-bold text-2xl/tighter tracking-tight text-slate-700 dark:text-white">Files</h3>
+                                </div>
                                 <ul className="flex items-center gap-1.5 lg:hidden -me-1.5">
                                     <li>
                                         <Button.Zoom size="rg" onClick={()=> {
@@ -514,6 +528,46 @@ const FileManagerPage = () => {
                                 </div>
                             </div>
                         </div>
+                        
+                        {/* Directory Breadcrumb Navigation */}
+                        <div className="mb-6">
+                            <div className="flex items-center gap-1 text-sm">
+                                <Icon className="text-base text-slate-400" name="folder" />
+                                <button
+                                    onClick={() => setCurrentPath("/")}
+                                    className={`px-2 py-1 rounded transition-colors duration-200 hover:bg-slate-100 dark:hover:bg-gray-800 ${
+                                        currentPath === "/" 
+                                            ? "text-primary-600 font-medium" 
+                                            : "text-slate-600 dark:text-slate-300 hover:text-primary-600"
+                                    }`}
+                                >
+                                    Root
+                                </button>
+                                {currentPath !== "/" && (
+                                    <>
+                                        {currentPath.split("/").filter(Boolean).map((folder, index, array) => {
+                                            const pathUpToIndex = "/" + array.slice(0, index + 1).join("/");
+                                            return (
+                                                <div key={index} className="flex items-center gap-1">
+                                                    <Icon className="text-xs text-slate-400" name="chevron-right" />
+                                                    <button
+                                                        onClick={() => setCurrentPath(pathUpToIndex)}
+                                                        className={`px-2 py-1 rounded transition-colors duration-200 hover:bg-slate-100 dark:hover:bg-gray-800 ${
+                                                            index === array.length - 1 
+                                                                ? "text-primary-600 font-medium" 
+                                                                : "text-slate-600 dark:text-slate-300 hover:text-primary-600"
+                                                        }`}
+                                                    >
+                                                        {folder}
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                        
                         <div className="mb-10 last:mb-0">
                             <QuickAccess />
                         </div>
