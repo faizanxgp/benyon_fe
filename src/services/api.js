@@ -252,6 +252,12 @@ export const getDirContents = (path = "/") => {
   return api.post("/files/dir_contents", formData);
 };
 
+export const searchFiles = (searchStr) => {
+  const formData = new FormData();
+  formData.append("search_str", searchStr);
+  return api.post("/files/search_files", formData);
+};
+
 /**
  * LOGOUT FLOW DOCUMENTATION
  * 
