@@ -3,7 +3,7 @@ import { getDirContents } from '../../../services/api';
 import React,{useState, useEffect, Fragment} from 'react'
 import Aside from './Aside';
 import Header from './Header';
-import QuickAccess from './QuickAccess';
+// import QuickAccess from './QuickAccess';
 import { Button, Icon, CheckBox, Avatar, Head } from '../../../componenets';
 import { fileManagerIcons } from '../../../store/icons'
 import { toInitials } from '../../../utilities';
@@ -568,9 +568,11 @@ const FileManagerPage = () => {
                             </div>
                         </div>
                         
-                        <div className="mb-10 last:mb-0">
+                        {/* QuickAccess section commented out */}
+                        {/* <div className="mb-10 last:mb-0">
                             <QuickAccess />
-                        </div>
+                        </div> */}
+                        
                         <div className="mb-10 last:mb-0">
                             <Tab.Group>
                                 <div className="pb-3 relative flex justify-between items-center">
