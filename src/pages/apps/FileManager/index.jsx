@@ -591,10 +591,10 @@ const FileManagerPage = () => {
                                                 style={{ cursor: item.is_dir ? "pointer" : "default" }}
                                                 title={item.is_dir ? "Open folder" : item.name}
                                                 >
-                                                <div className="h-18 flex justify-center items-center">
+                                                <div className="h-18 [&>svg]:h-full [&>svg]:mx-auto">
                                                     {item.is_dir ? fileManagerIcons.folderAlt : fileManagerIcons.fileDocAlt}
                                                 </div>
-                                                <div className="relative text-sm/snug text-center font-medium pt-4 px-5.5 mx-auto inline-flex justify-center">
+                                                <div className="text-sm/snug text-center font-medium pt-4 flex justify-center">
                                                     <span className="line-clamp-1">{item.name}</span>
                                                 </div>
                                                 <ul className="flex items-center justify-center pt-1 gap-3">
