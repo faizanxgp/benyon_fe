@@ -364,11 +364,11 @@ const ChangeRoleDropdown = ({className, currentRole, username, onRoleChange}) =>
 
 const UsersListCompactPage = () => {
     const [showSearchForm, setShowSearchForm] = useState(false);
-    const [showCardOptions, setShowCardOptions] = useState(false);
-
-    const [users, setUsers] = useState([]);
+    const [showCardOptions, setShowCardOptions] = useState(false);    const [users, setUsers] = useState([]);
     const [error, setError] = useState(null);
     const [showCreateUserDialog, setShowCreateUserDialog] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [createUserLoading, setCreateUserLoading] = useState(false);
 
     const [newUser, setNewUser] = useState({
         requiredActions: [],
@@ -381,25 +381,27 @@ const UsersListCompactPage = () => {
         attributes: { profile_pic_path: ["https://example.com/images/profile.jpg"] },
         role: "standard",
         enabled: true,
-    });
-
-    const fetchUsers = () => {
-    getUsersStatus()
-        .then(res => {
-        const detail = res.data.detail;
-        const data = Object.entries(detail).map(([username, arr], idx) => ({
-            id: idx,
-            username: username,                    // Key is the username
-            name: arr[0],                         // First element is Full Name
-            email: arr[1],                        // Second element is email
-            role: arr[2],                         // Third element is role
-            status: arr[3].charAt(0).toUpperCase() + arr[3].slice(1), // Fourth element is status (capitalize)
-        }));
-        setUsers(data);
-        })
-        .catch(err => {
-        setError('Failed to load users');
-        });
+    });    const fetchUsers = () => {
+        setLoading(true);
+        getUsersStatus()
+            .then(res => {
+                const detail = res.data.detail;
+                const data = Object.entries(detail).map(([username, arr], idx) => ({
+                    id: idx,
+                    username: username,
+                    name: arr[0],
+                    email: arr[1],
+                    role: arr[2],
+                    status: arr[3].charAt(0).toUpperCase() + arr[3].slice(1),
+                }));
+                setUsers(data);
+            })
+            .catch(err => {
+                setError('Failed to load users');
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     };
 
     // useEffect(() => {
@@ -485,7 +487,15 @@ const UsersListCompactPage = () => {
                 </PageHead.Option>
             </PageHead.Group>
         </PageHead>
-        <div className="border-y sm:border-x sm:rounded-md bg-white dark:bg-gray-950 border-gray-300 dark:border-gray-900 h-full -mx-3.5 sm:m-0">
+        <div className="border-y sm:border-x sm:rounded-md bg-white dark:bg-gray-950 border-gray-300 dark:border-gray-900 h-full -mx-3.5 sm:m-0 relative">
+            {loading && (
+                <div className="absolute inset-0 bg-white dark:bg-gray-950 bg-opacity-90 flex items-center justify-center z-50">
+                    <div className="flex items-center space-x-2">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+                        <span className="text-sm text-gray-600 dark:text-gray-300">Loading...</span>
+                    </div>
+                </div>
+            )}
             <div className="p-5 relative">
                 <div className="flex items-center justify-between relative">
                     <div className="flex items-center gap-4">
@@ -745,20 +755,20 @@ const UsersListCompactPage = () => {
                 &times;
             </button>
             <h2 className="text-lg font-bold mb-4">Create New User</h2>
-            <form
-
-                onSubmit={async (e) => {
-                e.preventDefault();
-                try {
-                    const userToCreate = { ...newUser};
-                    // await createUser(newUser);
-                    await createUser(userToCreate);
-                    alert("User created!");
-                    setShowCreateUserDialog(false);
-                    fetchUsers(); // <-- refresh users
-                } catch (err) {
-                    alert("Failed to create user!");
-                }
+            <form                onSubmit={async (e) => {
+                    e.preventDefault();
+                    setCreateUserLoading(true);
+                    try {
+                        const userToCreate = { ...newUser};
+                        await createUser(userToCreate);
+                        alert("User created!");
+                        setShowCreateUserDialog(false);
+                        fetchUsers();
+                    } catch (err) {
+                        alert("Failed to create user!");
+                    } finally {
+                        setCreateUserLoading(false);
+                    }
                 }}
 
             >
@@ -831,9 +841,16 @@ const UsersListCompactPage = () => {
                     <option value="standard">standard</option>
                 </select>
 
-                </div>
-                <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-                Create
+                </div>                <button 
+                    type="submit" 
+                    disabled={createUserLoading}
+                    className={`px-4 py-2 rounded text-white ${
+                        createUserLoading 
+                            ? 'bg-gray-400 cursor-not-allowed' 
+                            : 'bg-blue-600 hover:bg-blue-700'
+                    }`}
+                >
+                    {createUserLoading ? "Creating..." : "Create"}
                 </button>
             </form>
             </div>
