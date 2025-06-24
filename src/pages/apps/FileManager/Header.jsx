@@ -55,6 +55,7 @@ const Header = ({setShowUploadModal, userIsAdmin = false}) => {
         const handleClickOutside = (event) => {
             if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
                 setShowSearchResults(false);
+                setSearchResults([]); // Clear the search results array
             }
         };
 
