@@ -135,31 +135,28 @@ const LoginV2Page = () => {
         <Head title="Login v2" />
         <div className="relative flex min-h-screen">
             <div className="relative flex flex-col min-h-full bg-white dark:bg-gray-950 w-full flex-shrink-0">
-                <div className="m-auto w-full max-w-[420px] xs:max-w-[520px] p-5">
-                    <div className="relative flex justify-center flex-shrink-0 pb-6">
+                <div className="m-auto w-full max-w-[420px] xs:max-w-[520px] p-5">                    <div className="relative flex justify-center flex-shrink-0 pb-6">
                     <Link to="/" className="relative inline-block transition-opacity duration-300 h-10">
-                        <img className="h-full opacity-0 dark:opacity-100" src="/logo.png" srcSet="/logo2x.png 2x" alt="logo" />
-                        <img className="h-full opacity-100 dark:opacity-0 absolute start-0 top-0" src="/logo-dark.png" srcSet="/logo-dark2x.png 2x" alt="logo" />
+                        <img className="h-full" src="/beynon.png" alt="Beynon Sports" />
                     </Link>
                     </div>
                     <div className="border border-gray-300 dark:border-gray-900 rounded p-5 sm:p-6 md:p-10">                    <div className="pb-5">
                         <h5 className="text-xl font-heading font-bold -tracking-snug text-slate-700 dark:text-white leading-tighter mb-2">Sign-In</h5>
-                        <p className="text-sm leading-6 text-slate-400">Access the DashWind panel using your email and passcode.</p>
+                        <p className="text-sm leading-6 text-slate-400">Access the Beynon Dashboard panel using your email and password.</p>
                     </div>
                     {error && (
                         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
                             <p className="text-sm text-red-600">{error}</p>
                         </div>
                     )}
-                    <form onSubmit={handleSubmit}>
-                        <Form.Group>
+                    <form onSubmit={handleSubmit}>                        <Form.Group>
                             <Form.Label className="flex justify-between items-center mb-2" htmlFor="emailAddress">
-                                <span>Email or Username </span>
+                                <span>Email</span>
                             </Form.Label>
                             <Input.Wrap>
                                 <Input 
                                     id="emailAddress" 
-                                    placeholder="Enter your email address or username" 
+                                    placeholder="Enter your email address" 
                                     autoComplete="off" 
                                     size="lg"
                                     value={formData.username}
@@ -167,11 +164,10 @@ const LoginV2Page = () => {
                                     disabled={isLoading}
                                 />
                             </Input.Wrap>
-                        </Form.Group>
-                        <Form.Group>
+                        </Form.Group>                        <Form.Group>
                             <Form.Label className="flex justify-between items-center mb-2" htmlFor="password">
-                                <span>Passcode </span>
-                                <Link to="/auths/auth-reset-v2" className="inline-flex text-xs leading-none whitespace-nowrap transition-all duration-300 font-medium font-body text-primary-500 hover:text-primary-600">Forgot Code?</Link>
+                                <span>Password</span>
+                                <Link to="/auths/auth-reset-v2" className="inline-flex text-xs leading-none whitespace-nowrap transition-all duration-300 font-medium font-body text-primary-500 hover:text-primary-600">Forgot Password?</Link>
                             </Form.Label>
                             <Input.Wrap>
                                 <a tabIndex="-1" href="#password" onClick={(ev) => {
@@ -180,11 +176,10 @@ const LoginV2Page = () => {
                                     }} className={`absolute h-11 w-11 top-0 end-0 flex items-center justify-center js-password-toggle group/password ${passwordState ? "" : "is-shown"}`}>
                                     <em className="group-[.is-shown]/password:hidden text-slate-400 text-base leading-none ni ni-eye"></em>
                                     <em className="hidden group-[.is-shown]/password:block text-slate-400 text-base leading-none ni ni-eye-off"></em>
-                                </a>
-                                <Input 
+                                </a>                                <Input 
                                     id="password" 
                                     type={passwordState ? "text" : "password"} 
-                                    placeholder="Enter your passcode" 
+                                    placeholder="Enter your password" 
                                     autoComplete="off" 
                                     size="lg"
                                     value={formData.password}
@@ -204,22 +199,10 @@ const LoginV2Page = () => {
                                 {isLoading ? 'Signing In...' : 'Sign In'}
                             </Button>
                         </Form.Group>
-                    </form>
-                    <div className="pt-6"> 
+                    </form>                    <div className="pt-6"> 
                         New on our platform? 
                         <Link className="text-primary-500 hover:text-primary-600 transition-all duration-300" to="/auths/auth-register-v2"> Create an account</Link>
                     </div>
-                    <div className="text-center pt-6 pb-4">
-                        <h6 className="text-slate-300 whitespace-nowrap uppercase font-bold text-xxs tracking-relaxed leading-tight px-1.5 inline-block relative before:absolute before:h-px before:w-5 before:bg-slate-300 before:top-1/2 before:-translate-y-1/2 before:end-full after:absolute after:h-px after:w-5 after:bg-slate-300 after:top-1/2 after:-translate-y-1/2 after:start-full">Or</h6>
-                    </div>
-                    <ul className="flex flex-wrap justify-center gap-x-6">
-                        <li>
-                            <a className="inline-flex text-sm leading-none whitespace-nowrap transition-all duration-300 font-normal font-body text-primary-600 hover:text-primary-700 px-4 py-3" href="#link" onClick={(e)=> e.preventDefault()}>Facebook</a>
-                        </li>
-                        <li>
-                            <a className="inline-flex text-sm leading-none whitespace-nowrap transition-all duration-300 font-normal font-body text-primary-600 hover:text-primary-700 px-4 py-3" href="#link" onClick={(e)=> e.preventDefault()}>Google</a>
-                        </li>
-                    </ul>
                     </div>
                 </div>
                 <div className="border-t border-gray-200 dark:border-gray-800 py-6 px-5.5">
@@ -240,9 +223,8 @@ const LoginV2Page = () => {
                                     <LanguageDropdown />
                                 </li>
                             </ul>
-                            </div>
-                            <div className="w-full lg:w-1/2 p-2">
-                                <p className="text-slate-400 text-center lg:text-start text-sm/4">&copy; 2025 DashWind. All Rights Reserved.</p>
+                            </div>                            <div className="w-full lg:w-1/2 p-2">
+                                <p className="text-slate-400 text-center lg:text-start text-sm/4">&copy; 2025 Beynon Sports. Built by <a href="https://www.innovativelabs.com" target="_blank" rel="noopener noreferrer" className="text-primary-500 hover:text-primary-600 transition-all duration-300">Innovative Labs</a>.</p>
                             </div>
                         </div>
                     </div>

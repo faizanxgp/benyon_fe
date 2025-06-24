@@ -1,4 +1,4 @@
-import { createUser, deleteUser, getUsersStatus, getUsername } from '../../../services/api';
+import { createUser, deleteUser, getUsersStatus, getUsername, replaceUserRole } from '../../../services/api';
 // import { getUsersStatus } from '../../../services/api';
 import React, { useEffect, useState, Fragment } from 'react';
 
@@ -9,13 +9,7 @@ import { toInitials } from '../../../utilities';
 
 import { Menu } from '@headlessui/react';
 import { usePopper } from 'react-popper';
-import { useTheme } from                                     <li className="bg-gray-50 dark:bg-gray-1000 px-0.5">
-                                        <Tooltip placement="top" content="Wallet">
-                                            <Button.Zoom size="sm">
-                                                <Icon className="text-base/4.5" name="wallet-fill" />
-                                            </Button.Zoom>
-                                        </Tooltip>
-                                    </li>../layout/context";
+import { useTheme } from "../../../layout/context";
 
 // const ActionDropdown = ({className}) => {
     
@@ -319,12 +313,60 @@ const OptionsDropdown = ({className}) => {
   )
 }
 
+const ChangeRoleDropdown = ({className, currentRole, username, onRoleChange}) => {
+    const theme = useTheme();
+    let [dropdownToggle, setDropdownToggle] = useState()
+    let [dropdownContent, setDropdownContent] = useState()
+    let { styles, attributes } = usePopper(dropdownToggle, dropdownContent, {
+        placement : theme.direction === "rtl" ? "bottom-start" : "bottom-end",
+        modifiers: [
+            {name: 'offset', options: { offset: theme.direction === "rtl" ? [14, -8] : [-14, -8]}},
+            {name: 'preventOverflow', options: { padding: 8 }},
+        ],
+    })
+
+    // Determine the alternative role
+    const getAlternativeRole = (role) => {
+        return role === 'admin' ? 'standard' : 'admin';
+    };
+
+    const alternativeRole = getAlternativeRole(currentRole);
+
+    return (
+        <Menu as="div" className={`inline-flex relative ${className ? className : ''}`}>
+            {({ open }) => (
+                <>
+                    <Menu.Button as='div' className={`inline-flex${open ? ' active' : ''}`} ref={setDropdownToggle}>
+                        <Tooltip placement="top" content="Change Role">
+                            <Button.Zoom size="sm">
+                                <Icon className="text-base/4.5" name="account-setting" />
+                            </Button.Zoom>
+                        </Tooltip>
+                    </Menu.Button>
+                    <Menu.Items modal={false} ref={setDropdownContent} style={styles.popper} {...attributes.popper} className="absolute border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 rounded-md shadow z-[1000] min-w-[180px]">
+                        <ul className="py-2">
+                            <li>
+                                <Menu.Item as="button"
+                                    className="w-full relative px-5 py-2.5 flex items-center rounded-[inherit] text-xs leading-5 font-medium text-primary-600 hover:bg-slate-50 hover:dark:bg-gray-900 transition-all duration-300"
+                                    onClick={() => onRoleChange && onRoleChange(alternativeRole)}
+                                >
+                                    <Icon className="text-start text-lg leading-none w-7 opacity-80" name="account-setting" />
+                                    <span>Change to {alternativeRole}</span>
+                                </Menu.Item>
+                            </li>
+                        </ul>
+                    </Menu.Items>
+                </>
+            )}
+        </Menu>
+    )
+}
+
 const UsersListCompactPage = () => {
     const [showSearchForm, setShowSearchForm] = useState(false);
     const [showCardOptions, setShowCardOptions] = useState(false);
 
     const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showCreateUserDialog, setShowCreateUserDialog] = useState(false);
 
@@ -342,7 +384,6 @@ const UsersListCompactPage = () => {
     });
 
     const fetchUsers = () => {
-    setLoading(true);
     getUsersStatus()
         .then(res => {
         const detail = res.data.detail;
@@ -355,11 +396,9 @@ const UsersListCompactPage = () => {
             status: arr[3].charAt(0).toUpperCase() + arr[3].slice(1), // Fourth element is status (capitalize)
         }));
         setUsers(data);
-        setLoading(false);
         })
         .catch(err => {
         setError('Failed to load users');
-        setLoading(false);
         });
     };
 
@@ -504,7 +543,6 @@ const UsersListCompactPage = () => {
                     </div>
                 </div>
             </div>
-            {loading && <div className="p-4 text-center text-gray-500">Loading...</div>}
             {error && <div className="p-4 text-center text-red-500">{error}</div>}
             <table className="border-collapse w-full border-gray-300 dark:border-gray-900"> 
                 <thead>
@@ -608,26 +646,39 @@ const UsersListCompactPage = () => {
                             </td>
                             <td className="py-2 px-2 first:ps-6 last:pe-6 border-b border-gray-300 dark:border-gray-900 text-end max-w-[3.75rem]">
                                 <ul className="relative flex items-center justify-end -me-2">
-                                    <li className="opacity-0 transition-all duration-300 bg-gray-50 dark:bg-gray-1000 px-0.5 group-hover:opacity-100">
-                                        <Tooltip placement="top" content="Wallet">
-                                            <Button.Zoom size="sm">
-                                                <Icon className="text-base/4.5" name="wallet-fill" />
-                                            </Button.Zoom>
-                                        </Tooltip>
-                                    </li>
-                                    <li className="opacity-0 transition-all duration-300 bg-gray-50 dark:bg-gray-1000 px-0.5 group-hover:opacity-100">
-                                        <Tooltip placement="top" content="Send Email">
-                                            <Button.Zoom size="sm">
-                                                <Icon className="text-base/4.5" name="mail-fill" />
-                                            </Button.Zoom>
-                                        </Tooltip>
-                                    </li>
-                                    <li className="opacity-0 transition-all duration-300 bg-gray-50 dark:bg-gray-1000 px-0.5 group-hover:opacity-100">
+                                    <li className="bg-gray-50 dark:bg-gray-1000 px-0.5">
                                         <Tooltip placement="top" content="Suspend">
-                                            <Button.Zoom size="sm">
+                                            <Button.Zoom size="sm">
                                                 <Icon className="text-base/4.5" name="user-cross-fill" />
                                             </Button.Zoom>
                                         </Tooltip>
+                                    </li>
+                                    <li className="bg-gray-50 dark:bg-gray-1000 px-0.5">
+                                        <ChangeRoleDropdown
+                                            currentRole={item.role}
+                                            username={item.username}
+                                            onRoleChange={async (newRole) => {
+                                                if (window.confirm(`Are you sure you want to change role for ${item.name} from ${item.role} to ${newRole}?`)) {
+                                                    try {
+                                                        const response = await replaceUserRole({
+                                                            username: item.username,
+                                                            role: newRole
+                                                        });
+                                                        
+                                                        // Check status code to confirm role change
+                                                        if (response.status === 200) {
+                                                            alert(`Role successfully changed from ${item.role} to ${newRole} for user ${item.name}`);
+                                                            fetchUsers(); // Refresh the users list
+                                                        } else {
+                                                            alert(`Failed to change role. Status: ${response.status}`);
+                                                        }
+                                                    } catch (error) {
+                                                        console.error('Error changing user role:', error);
+                                                        alert(`Failed to change role: ${error.response?.data?.message || error.message}`);
+                                                    }
+                                                }
+                                            }}
+                                        />
                                     </li>
                                     {/* <li>
                                         <ActionDropdown />

@@ -78,12 +78,11 @@ const RegisterV2Page = () => {
                     <div className="border border-gray-300 dark:border-gray-900 rounded p-5 sm:p-6 md:p-10">
                         <div className="pb-5">
                         <h5 className="text-xl font-heading font-bold -tracking-snug text-slate-700 dark:text-white leading-tighter mb-2">Register</h5>
-                    <p className="text-sm leading-6 text-slate-400">Create New DashWind Account</p>
+                    <p className="text-sm leading-6 text-slate-400">Create New Beynon Sports Account</p>
                     </div>
-                    <form action="#">
-                        <Form.Group>
+                    <form action="#">                        <Form.Group>
                             <Form.Label className="flex justify-between items-center mb-2" htmlFor="fullName">
-                                <span>Name </span>
+                                <span>Full Name </span>
                             </Form.Label>
                             <Input.Wrap>
                                 <Input id="fullName" placeholder="Enter your name" autoComplete="off" size="lg" />
@@ -91,15 +90,15 @@ const RegisterV2Page = () => {
                         </Form.Group>
                         <Form.Group>
                             <Form.Label className="flex justify-between items-center mb-2" htmlFor="emailAddress">
-                                <span>Email or Username </span>
+                                <span>Email </span>
                             </Form.Label>
                             <Input.Wrap>
-                                <Input id="emailAddress" placeholder="Enter your email address or username" autoComplete="off" size="lg" />
+                                <Input id="emailAddress" placeholder="Enter your email address" autoComplete="off" size="lg" />
                             </Input.Wrap>
                         </Form.Group>
                         <Form.Group>
                             <Form.Label className="flex justify-between items-center mb-2" htmlFor="password">
-                                <span>Passcode </span>
+                                <span>Password </span>
                             </Form.Label>
                             <Input.Wrap>
                                 <a tabIndex="-1" href="#password" onClick={(ev) => {
@@ -109,33 +108,21 @@ const RegisterV2Page = () => {
                                     <em className="group-[.is-shown]/password:hidden text-slate-400 text-base leading-none ni ni-eye"></em>
                                     <em className="hidden group-[.is-shown]/password:block text-slate-400 text-base leading-none ni ni-eye-off"></em>
                                 </a>
-                                <Input id="password" type={passwordState ? "text" : "password"} placeholder="Enter your passcode" autoComplete="off" size="lg" />
+                                <Input id="password" type={passwordState ? "text" : "password"} placeholder="Enter your password" autoComplete="off" size="lg" />
                             </Input.Wrap>
                         </Form.Group>
                         <Form.Group className="flex">
                             <CheckBox id="checkAgree">
-                            I agree to DashWind <Link className="text-primary-500 hover:text-primary-600 transition-all duration-300" to="/terms-policy">Privacy Policy</Link> &amp; <Link className="text-primary-500 hover:text-primary-600 transition-all duration-300" to="/terms-policy">Terms</Link>.
+                            I agree to Beynon Sports Privacy Policy & Terms.
                             </CheckBox>
                         </Form.Group>
                         <Form.Group>
                             <Button as="Link" to="/auths/auth-login-v2" size="lg" variant="primary" block>Register</Button>
                         </Form.Group>
-                    </form>
-                    <div className="pt-6"> 
+                    </form>                    <div className="pt-6"> 
                         Already have an account ?
                         <Link className="text-primary-500 hover:text-primary-600 font-medium transition-all duration-300 " to="/auths/auth-login-v2"> Sign in instead</Link>
                     </div>
-                    <div className="text-center pt-6 pb-4">
-                        <h6 className="text-slate-300 whitespace-nowrap uppercase font-bold text-xxs tracking-relaxed leading-tight px-1.5 inline-block relative before:absolute before:h-px before:w-5 before:bg-slate-300 before:top-1/2 before:-translate-y-1/2 before:end-full after:absolute after:h-px after:w-5 after:bg-slate-300 after:top-1/2 after:-translate-y-1/2 after:start-full">Or</h6>
-                    </div>
-                    <ul className="flex flex-wrap justify-center gap-x-6">
-                        <li>
-                            <a className="inline-flex text-sm leading-none whitespace-nowrap transition-all duration-300 font-normal font-body text-primary-600 hover:text-primary-700 px-4 py-3" href="#link" onClick={(e)=> e.preventDefault()}>Facebook</a>
-                        </li>
-                        <li>
-                            <a className="inline-flex text-sm leading-none whitespace-nowrap transition-all duration-300 font-normal font-body text-primary-600 hover:text-primary-700 px-4 py-3" href="#link" onClick={(e)=> e.preventDefault()}>Google</a>
-                        </li>
-                    </ul>
                     </div>
                 </div>
                 <div className="border-t border-gray-200 dark:border-gray-800 py-6 px-5.5">
@@ -156,9 +143,8 @@ const RegisterV2Page = () => {
                                     <LanguageDropdown />
                                 </li>
                             </ul>
-                            </div>
-                            <div className="w-full lg:w-1/2 p-2">
-                                <p className="text-slate-400 text-center lg:text-start text-sm/4">&copy; 2025 DashWind. All Rights Reserved.</p>
+                            </div>                            <div className="w-full lg:w-1/2 p-2">
+                                <p className="text-slate-400 text-center lg:text-start text-sm/4">&copy; 2025 Beynon Sports. Built by <a href="https://www.innovativelabs.us" target="_blank" rel="noopener noreferrer" className="text-primary-500 hover:text-primary-600 transition-all duration-300">Innovative Labs</a>.</p>
                             </div>
                         </div>
                     </div>

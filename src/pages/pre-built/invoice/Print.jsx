@@ -89,7 +89,7 @@ const InvoicePrintPage = () => {
                                     <span className="text-slate-600 dark:text-slate-400 text-sm/5">24108054</span>
                                 </td>
                                 <td className="py-2 px-2 first:ps-6 last:pe-6 border-b border-gray-300 dark:border-gray-900">
-                                    <span className="text-slate-600 dark:text-slate-400 text-sm/5 whitespace-nowrap">DashWind - Conceptual App Dashboard - Regular License</span>
+                                    <span className="text-slate-600 dark:text-slate-400 text-sm/5 whitespace-nowrap">Beynon Sports - Conceptual App Dashboard - Regular License</span>
                                 </td>
                                 <td className="py-2 px-2 first:ps-6 last:pe-6 border-b border-gray-300 dark:border-gray-900">
                                     <span className="text-slate-600 dark:text-slate-400 text-sm/5">$40.00</span>

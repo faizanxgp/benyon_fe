@@ -51,24 +51,17 @@ import Error404ModernPage from "../pages/errors/404Modern";
 import Error504Page from "../pages/errors/504";
 import Error504ModernPage from "../pages/errors/504Modern";
 
-import LoginPage from "../pages/auths/Login";
 import LoginV2Page from "../pages/auths/LoginV2";
-import LoginV3Page from "../pages/auths/LoginV3";
-import RegisterPage from "../pages/auths/Register";
 import RegisterV2Page from "../pages/auths/RegisterV2";
-import RegisterV3Page from "../pages/auths/RegisterV3";
-import ForgotPage from "../pages/auths/Forgot";
 import ForgotV2Page from "../pages/auths/ForgotV2";
-import ForgotV3Page from "../pages/auths/ForgotV3";
-import SuccessPage from "../pages/auths/Success";
 import SuccessV2Page from "../pages/auths/SuccessV2";
-import SuccessV3Page from "../pages/auths/SuccessV3";
 
 import BlankPage from "../pages/Blank";
 import FaqsPage from "../pages/misc/Faqs";
 import TermsPolicyPage from "../pages/misc/TermsPolicy";
 import RegularV1Page from "../pages/misc/RegularV1";
 import RegularV2Page from "../pages/misc/RegularV2";
+import TroubleshootLogin from "../pages/misc/TroubleshootLogin";
 
 import ComponentList from "../pages/components";
 import NioIconsPage from "../pages/components/NioIcons";
@@ -113,7 +106,7 @@ import CardWidgetsPage from "../pages/components/widgets/CardsWidgets";
 import ChartWidgetsPage from "../pages/components/widgets/ChartsWidgets";
 import RatingWidgetsPage from "../pages/components/widgets/RatingsWidgets";
 
-import ThemeProvider from "../layout/context";
+import ThemeProvider from "../layout/context/ThemeContext";
 
 import { useLocation } from "react-router";
 
@@ -142,18 +135,14 @@ function Router() {
                             <Route path="errors/404-classic" element={<Error404Page />} />
                             <Route path="errors/404-modern" element={<Error404ModernPage />} />
                             <Route path="errors/504-classic" element={<Error504Page />} />
-                            <Route path="errors/504-modern" element={<Error504ModernPage />} />                            <Route path="auths/auth-login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+                            <Route path="errors/504-modern" element={<Error504ModernPage />} />                            <Route path="auths/auth-login" element={<PublicRoute><LoginV2Page /></PublicRoute>} />
                             <Route path="auths/auth-login-v2" element={<PublicRoute><LoginV2Page /></PublicRoute>} />
-                            <Route path="auths/auth-login-v3" element={<PublicRoute><LoginV3Page /></PublicRoute>} />
-                            <Route path="auths/auth-register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+                            <Route path="auths/auth-register" element={<PublicRoute><RegisterV2Page /></PublicRoute>} />
                             <Route path="auths/auth-register-v2" element={<PublicRoute><RegisterV2Page /></PublicRoute>} />
-                            <Route path="auths/auth-register-v3" element={<PublicRoute><RegisterV3Page /></PublicRoute>} />
-                            <Route path="auths/auth-reset" element={<PublicRoute><ForgotPage /></PublicRoute>} />
+                            <Route path="auths/auth-reset" element={<PublicRoute><ForgotV2Page /></PublicRoute>} />
                             <Route path="auths/auth-reset-v2" element={<PublicRoute><ForgotV2Page /></PublicRoute>} />
-                            <Route path="auths/auth-reset-v3" element={<PublicRoute><ForgotV3Page /></PublicRoute>} />
-                            <Route path="auths/auth-success" element={<PublicRoute><SuccessPage /></PublicRoute>} />
+                            <Route path="auths/auth-success" element={<PublicRoute><SuccessV2Page /></PublicRoute>} />
                             <Route path="auths/auth-success-v2" element={<PublicRoute><SuccessV2Page /></PublicRoute>} />
-                            <Route path="auths/auth-success-v3" element={<PublicRoute><SuccessV3Page /></PublicRoute>} />
 
                             <Route path="invoice-print/:invoiceId" element={<InvoicePrintPage />}></Route>
                         </Route>                        <Route element={<Layout container/>}>
@@ -203,6 +192,7 @@ function Router() {
                             <Route path="terms-policy" element={<ProtectedRoute><TermsPolicyPage /></ProtectedRoute>} />
                             <Route path="regular-v1" element={<ProtectedRoute><RegularV1Page /></ProtectedRoute>} />
                             <Route path="regular-v2" element={<ProtectedRoute><RegularV2Page /></ProtectedRoute>} />
+                            <Route path="troubleshoot-login" element={<TroubleshootLogin />} />
 
                             <Route path="components">
                                 <Route index element={<ProtectedRoute><ComponentList /></ProtectedRoute>} />

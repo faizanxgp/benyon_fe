@@ -28,7 +28,7 @@ const Sidebar = ({mobile, visibility, setVisibility, compact, setCompact }) => {
   return (
     <>
     <div className={classes}>
-        <div className="flex items-center min-w-full w-72 h-16 border-b border-e bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-900 px-6 py-3 overflow-hidden">
+        <div className="flex items-center min-w-full w-72 h-16 border-b border-e bg-white border-gray-200 dark:border-gray-900 px-6 py-3 overflow-hidden">
             <div className="-ms-1 me-4">
                 <div className="hidden xl:block">
                     <a href="#sidebar" onClick={(ev) => { ev.preventDefault(); setCompact(!compact) }} className="sidebar-compact-toggle *:pointer-events-none inline-flex items-center isolate relative h-9 w-9 px-1.5 before:content-[''] before:absolute before:-z-[1] before:h-5 before:w-5 hover:before:h-10 hover:before:w-10 before:rounded-full before:opacity-0 hover:before:opacity-100 before:transition-all before:duration-300 before:-translate-x-1/2  before:-translate-y-1/2 before:top-1/2 before:left-1/2 before:bg-gray-200 dark:before:bg-gray-900">
@@ -41,12 +41,11 @@ const Sidebar = ({mobile, visibility, setVisibility, compact, setCompact }) => {
             </div>
             <div className="relative flex flex-shrink-0">
                 <Link to="/home" className="relative inline-block transition-opacity duration-300 h-9 group-[&.is-compact:not(.has-hover)]/sidebar:opacity-0">
-                    <img className="h-full opacity-0 dark:opacity-100" src="/logo.png" srcSet="/logo2x.png 2x" alt="logo" />
-                    <img className="h-full opacity-100 dark:opacity-0 absolute start-0 top-0" src="/logo-dark.png" srcSet="/logo-dark2x.png 2x" alt="logo" />
+                    <img className="h-full" src="/beynon.png" alt="Benyon Sports" />
                 </Link>
             </div>
         </div>
-        <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className="nk-sidebar-body max-h-full relative overflow-hidden w-full bg-white dark:bg-gray-950 border-e border-gray-200 dark:border-gray-900">
+        <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className="nk-sidebar-body max-h-full relative overflow-hidden w-full bg-white border-e border-gray-200 dark:border-gray-900">
             <div className="flex flex-col w-full h-[calc(100vh-theme(spacing.16))]">
                 <Simplebar className='h-full pt-4 pb-10'>
                     <Menu setSidebarVisibility={setVisibility} />

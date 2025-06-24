@@ -385,7 +385,7 @@ const Menu = ({setSidebarVisibility}) => {
                     )
                 : 
                 <li className="relative first:pt-1 pt-10 pb-2 px-6 before:absolute before:h-px before:w-full before:start-0 before:top-1/2 before:bg-gray-200 dark:before:bg-gray-900 first:before:hidden before:opacity-0 group-[&.is-compact:not(.has-hover)]/sidebar:before:opacity-100" >
-                    <h6 className="group-[&.is-compact:not(.has-hover)]/sidebar:opacity-0 text-slate-400 dark:text-slate-300 whitespace-nowrap uppercase font-bold text-xs tracking-relaxed leading-tight">{item.heading}</h6>
+                    <h6 className="group-[&.is-compact:not(.has-hover)]/sidebar:opacity-0 text-black whitespace-nowrap uppercase font-bold text-xs tracking-relaxed leading-tight">{item.heading}</h6>
                 </li>}
             </Fragment>
         )}
