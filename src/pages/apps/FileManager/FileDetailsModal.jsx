@@ -3,7 +3,47 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Avatar, Breadcrumb, Button, Icon } from '../../../componenets'
 import { fileManagerIcons } from '../../../store/icons'
 
-const FileDetailsModal = ({show, setShow}) => {
+const FileDetailsModal = ({show, setShow, selectedItem}) => {
+
+    // Helper function to format file size
+    const formatFileSize = (bytes) => {
+        // Check for null, undefined, or empty string, but allow 0
+        if (bytes === null || bytes === undefined || bytes === '') return 'Unknown';
+        
+        const numBytes = Number(bytes);
+        if (isNaN(numBytes)) return 'Unknown';
+        
+        if (numBytes === 0) return '0 B';
+        if (numBytes < 1024) return `${numBytes} B`;
+        if (numBytes < 1024 * 1024) return `${(numBytes / 1024).toFixed(1)} KB`;
+        if (numBytes < 1024 * 1024 * 1024) return `${(numBytes / (1024 * 1024)).toFixed(1)} MB`;
+        return `${(numBytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+    };
+
+    // Helper function to format date
+    const formatDate = (dateString) => {
+        if (!dateString) return 'Unknown';
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        } catch {
+            return dateString;
+        }
+    };
+
+    // Default to empty object if no item selected
+    const item = selectedItem || {};
+    
+    // Debug: log what we received
+    if (show) {
+        console.log('FileDetailsModal opened with item:', item);
+        console.log('Item size_bytes:', item.size_bytes);
+        console.log('Item is_dir:', item.is_dir);
+    }
 
   return (
     <Transition appear show={show} as={Fragment}>
@@ -35,11 +75,11 @@ const FileDetailsModal = ({show, setShow}) => {
                         <div className="flex flex-shrink-0 items-center justify-between px-5 sm:px-6 py-4 rounded-t-[inherit] border-b border-gray-200 dark:border-gray-800">
                             <div className="flex items-center">
                                 <div className="h-10 [&>svg]:h-full">
-                                    {fileManagerIcons.folder}
+                                    {item.is_dir ? fileManagerIcons.folder : (item.icon || fileManagerIcons.fileDocAlt)}
                                 </div>
                                 <div className="ms-2">
-                                    <div className="flex items-center text-sm font-medium mb-1"><span className="line-clamp-1">UI/UX Design</span></div>
-                                    <div className="text-xs text-slate-400">Project</div>
+                                    <div className="flex items-center text-sm font-medium mb-1"><span className="line-clamp-1">{item.name || 'Unknown'}</span></div>
+                                    <div className="text-xs text-slate-400">{item.is_dir ? 'Folder' : 'File'}</div>
                                 </div>
                             </div>
                             <button onClick={() => setShow(false)} className="text-slate-500 hover:text-slate-700 dark:text-white">
@@ -50,47 +90,49 @@ const FileDetailsModal = ({show, setShow}) => {
                             <div className="nk-file-details">
                                 <div className="py-2 flex flex-wrap xs:flex-nowrap xs:py-1.5">
                                     <div className="text-sm/5 w-full xs:w-[100px] xs:flex-shrink-0 text-slate-400">Type</div>
-                                    <div className="text-sm/5 text-slate-600 dark:text-slate-400">Folder</div>
+                                    <div className="text-sm/5 text-slate-600 dark:text-slate-400">{item.is_dir ? 'Folder' : 'File'}</div>
                                 </div>
                                 <div className="py-2 flex flex-wrap xs:flex-nowrap xs:py-1.5">
                                     <div className="text-sm/5 w-full xs:w-[100px] xs:flex-shrink-0 text-slate-400">Size</div>
-                                    <div className="text-sm/5 text-slate-600 dark:text-slate-400">35.48 MB</div>
+                                    <div className="text-sm/5 text-slate-600 dark:text-slate-400">
+                                        {item.is_dir 
+                                            ? `${item.num_files || 0} files, ${item.num_subdirs || 0} folders`
+                                            : `File size: ${formatFileSize(item.size_bytes || item.size || 0)}`}
+                                    </div>
                                 </div>
                                 <div className="py-2 flex flex-wrap xs:flex-nowrap xs:py-1.5">
                                     <div className="text-sm/5 w-full xs:w-[100px] xs:flex-shrink-0 text-slate-400">Location</div>
                                     <div className="text-sm/5 text-slate-600 dark:text-slate-400">
                                         <Breadcrumb>
-                                            <Breadcrumb.Item separator="arrow"><Breadcrumb.Link to="/">ThemeForest</Breadcrumb.Link></Breadcrumb.Item>
-                                            <Breadcrumb.Item separator="arrow">Project</Breadcrumb.Item>
+                                            <Breadcrumb.Item separator="arrow"><Breadcrumb.Link to="/">Home</Breadcrumb.Link></Breadcrumb.Item>
+                                            <Breadcrumb.Item separator="arrow">{item.path || 'Current Folder'}</Breadcrumb.Item>
                                         </Breadcrumb>
                                     </div>
                                 </div>
                                 <div className="py-2 flex flex-wrap xs:flex-nowrap xs:py-1.5">
                                     <div className="text-sm/5 w-full xs:w-[100px] xs:flex-shrink-0 text-slate-400">Owner</div>
-                                    <div className="text-sm/5 text-slate-600 dark:text-slate-400">Me</div>
+                                    <div className="text-sm/5 text-slate-600 dark:text-slate-400">{item.owner || 'Me'}</div>
                                 </div>
-                                <div className="py-2 flex flex-wrap xs:flex-nowrap xs:py-1.5">
-                                    <div className="text-sm/5 w-full xs:w-[100px] xs:flex-shrink-0 text-slate-400">Shared with</div>
-                                    <div className="text-sm/5 flex-shrink-0 text-slate-600">
-                                        <Avatar.Group size="mb">
-                                            <Avatar variant="primary" size="mb" rounded img="/images/avatar/b-sm.jpg"></Avatar>
-                                            <Avatar variant="purple" size="mb" rounded text="IH"></Avatar>
-                                            <Avatar variant="pink" size="mb" rounded text="AB"></Avatar>
-                                            <Avatar variant="slate" size="mb" rounded text="+2"></Avatar>
-                                        </Avatar.Group>
+                                {item.users && item.users.length > 0 && (
+                                    <div className="py-2 flex flex-wrap xs:flex-nowrap xs:py-1.5">
+                                        <div className="text-sm/5 w-full xs:w-[100px] xs:flex-shrink-0 text-slate-400">Shared with</div>
+                                        <div className="text-sm/5 flex-shrink-0 text-slate-600">
+                                            <Avatar.Group size="mb">
+                                                {item.users.slice(0, 3).map((user, index) => (
+                                                    user.image 
+                                                        ? <Avatar key={index} size="mb" rounded img={user.image} />
+                                                        : <Avatar key={index} variant="primary" size="mb" rounded text={user.name?.substring(0, 2) || 'U'} />
+                                                ))}
+                                                {item.users.length > 3 && <Avatar variant="slate" size="mb" rounded text={`+${item.users.length - 3}`} />}
+                                            </Avatar.Group>
+                                        </div>
                                     </div>
-                                </div>
+                                )}
                                 <div className="py-2 flex flex-wrap xs:flex-nowrap xs:py-1.5">
                                     <div className="text-sm/5 w-full xs:w-[100px] xs:flex-shrink-0 text-slate-400">Modified</div>
-                                    <div className="text-sm/5 text-slate-600 dark:text-slate-400">Feb 19, 2020 by Abu Bit Istiyak</div>
-                                </div>
-                                <div className="py-2 flex flex-wrap xs:flex-nowrap xs:py-1.5">
-                                    <div className="text-sm/5 w-full xs:w-[100px] xs:flex-shrink-0 text-slate-400">Opened</div>
-                                    <div className="text-sm/5 text-slate-600 dark:text-slate-400">Apr 23, 2020 by Me</div>
-                                </div>
-                                <div className="py-2 flex flex-wrap xs:flex-nowrap xs:py-1.5">
-                                    <div className="text-sm/5 w-full xs:w-[100px] xs:flex-shrink-0 text-slate-400">Created</div>
-                                    <div className="text-sm/5 text-slate-600 dark:text-slate-400">Feb 19, 2020</div>
+                                    <div className="text-sm/5 text-slate-600 dark:text-slate-400">
+                                        {formatDate(item.last_modified)}
+                                    </div>
                                 </div>
                             </div>
                         </div>

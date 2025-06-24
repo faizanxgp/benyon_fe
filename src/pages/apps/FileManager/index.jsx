@@ -18,7 +18,7 @@ import { Menu } from '@headlessui/react';
 import { usePopper } from 'react-popper';
 import { useTheme } from "../../../layout/context";
 
-const ItemActionDropdown = ({className, setShowDetailsModal, setShowShareModal, setShowCopyModal, setShowMoveModal}) => {
+const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedItem, setShowShareModal, setShowCopyModal, setShowMoveModal}) => {
     const theme = useTheme();
     let [dropdownToggle, setDropdownToggle] = useState()
     let [dropdownContent, setDropdownContent] = useState()
@@ -29,6 +29,11 @@ const ItemActionDropdown = ({className, setShowDetailsModal, setShowShareModal, 
             {name: 'preventOverflow', options: { padding: 8 }},
         ],
     })
+
+    const handleShowDetails = () => {
+        setSelectedItem(item);
+        setShowDetailsModal(true);
+    };
 
   return (
     <Menu as="div" className={`inline-flex relative ${className ? className : ''}`}>
@@ -43,7 +48,7 @@ const ItemActionDropdown = ({className, setShowDetailsModal, setShowShareModal, 
                     <ul className="py-2">
                         <li>
                             <Menu.Item as={Fragment}>
-                                <button onClick={() => setShowDetailsModal(true)} className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300 outline-none">
+                                <button onClick={handleShowDetails} className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300 outline-none">
                                     <Icon className="text-lg/none w-8 opacity-80 text-primary-600 text-start" name="eye" />
                                     <span>Details</span>
                                 </button>
@@ -262,6 +267,7 @@ const FileManagerPage = () => {
     const [showSearch, setShowSearch] = useState(false);
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
     const [showShareModal, setShowShareModal] = useState(false);
     const [showMoveModal, setShowMoveModal] = useState(false);
     const [showCopyModal, setShowCopyModal] = useState(false);
@@ -611,20 +617,12 @@ const FileManagerPage = () => {
                                                 <div className="text-sm/snug text-center font-medium pt-4 flex justify-center">
                                                     <span className="line-clamp-1">{item.name}</span>
                                                 </div>
-                                                <ul className="flex items-center justify-center pt-1 gap-3">
-                                                    <li className="text-xs/5 relative text-slate-400">
-                                                    {item.last_modified ? item.last_modified.slice(0, 10) : ""}
-                                                    </li>
-                                                    <li className="text-xs/5 relative text-slate-400">
-                                                    {item.is_dir
-                                                        ? `${item.num_files} files, ${item.num_subdirs} folders`
-                                                        : `${(item.size_bytes / 1024).toFixed(1)} KB`}
-                                                    </li>
-                                                </ul>
                                                 </a>
                                                 <div className="absolute top-2 end-2 transition-all duration-300 group-hover/fileitem:opacity-100">
                                                 <ItemActionDropdown
+                                                    item={item}
                                                     setShowDetailsModal={setShowDetailsModal}
+                                                    setSelectedItem={setSelectedItem}
                                                     setShowShareModal={setShowShareModal}
                                                     setShowCopyModal={setShowCopyModal}
                                                     setShowMoveModal={setShowMoveModal}
@@ -659,14 +657,9 @@ const FileManagerPage = () => {
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    <ul className="flex items-center pt-1 gap-3">
-                                                                        <li className="text-xs/5 relative text-slate-400 first:before:hidden before:absolute before:rounded-full before:-start-1.5 before:top-1/2 before:-translate-y-1/2 before:-translate-x-1/2  before:h-1 before:w-1 before:bg-slate-400 before:opacity-80">{item.date}</li>
-                                                                        <li className="text-xs/5 relative text-slate-400 first:before:hidden before:absolute before:rounded-full before:-start-1.5 before:top-1/2 before:-translate-y-1/2 before:-translate-x-1/2  before:h-1 before:w-1 before:bg-slate-400 before:opacity-80">{item.size}</li>
-                                                                        <li className="text-xs/5 relative text-slate-400 first:before:hidden before:absolute before:rounded-full before:-start-1.5 before:top-1/2 before:-translate-y-1/2 before:-translate-x-1/2  before:h-1 before:w-1 before:bg-slate-400 before:opacity-80">{item.users ? item.users.length + ' Members' : "Only Me"}</li>
-                                                                    </ul>
                                                                 </a>
                                                                 <div className="absolute top-2 end-2 transition-all duration-300 group-hover/fileitem:opacity-100">
-                                                                    <ItemActionDropdown setShowDetailsModal={setShowDetailsModal} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} />
+                                                                    <ItemActionDropdown item={item} setShowDetailsModal={setShowDetailsModal} setSelectedItem={setSelectedItem} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} />
                                                                 </div>
                                                             </div>}
                                                         </React.Fragment>
@@ -694,14 +687,9 @@ const FileManagerPage = () => {
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    <ul className="flex items-center pt-1 gap-3">
-                                                                        <li className="text-xs/5 relative text-slate-400 first:before:hidden before:absolute before:rounded-full before:-start-1.5 before:top-1/2 before:-translate-y-1/2 before:-translate-x-1/2  before:h-1 before:w-1 before:bg-slate-400 before:opacity-80">{item.date}</li>
-                                                                        <li className="text-xs/5 relative text-slate-400 first:before:hidden before:absolute before:rounded-full before:-start-1.5 before:top-1/2 before:-translate-y-1/2 before:-translate-x-1/2  before:h-1 before:w-1 before:bg-slate-400 before:opacity-80">{item.size}</li>
-                                                                        <li className="text-xs/5 relative text-slate-400 first:before:hidden before:absolute before:rounded-full before:-start-1.5 before:top-1/2 before:-translate-y-1/2 before:-translate-x-1/2  before:h-1 before:w-1 before:bg-slate-400 before:opacity-80">{item.users ? item.users.length + ' Members' : "Only Me"}</li>
-                                                                    </ul>
                                                                 </a>
                                                                 <div className="absolute top-2 end-2 transition-all duration-300 group-hover/fileitem:opacity-100">
-                                                                    <ItemActionDropdown setShowDetailsModal={setShowDetailsModal} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} />
+                                                                    <ItemActionDropdown item={item} setShowDetailsModal={setShowDetailsModal} setSelectedItem={setSelectedItem} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} />
                                                                 </div>
                                                             </div>}
                                                         </React.Fragment>
@@ -716,7 +704,6 @@ const FileManagerPage = () => {
                                                 <div className="flex-grow ">
                                                     <OrderedDropdown />
                                                 </div>
-                                                <div className="w-3/12 hidden md:block"><div className="font-medium text-sm">Members</div></div>
                                                 <div className="flex-shrink w-[60px] pe-4 text-end">
                                                     <BulkActionDropdown className="dropdown me-px" setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} />
                                                 </div>
@@ -744,28 +731,8 @@ const FileManagerPage = () => {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div className="w-3/12 py-4 first:ps-5 hidden sm:block">
-                                                                <div className="text-sm text-slate-600 dark:text-slate-400">{item.date},&nbsp; {item.time}</div>
-                                                                {item.owner && <><div className="text-xs text-slate-400 mt-0.5">by {item.owner.name}</div></>}
-                                                            </div>
-                                                            <div className="w-3/12 py-4 first:ps-5 hidden md:block">
-                                                                {(item.users?.length > 1) ?
-                                                                    <Avatar.Group size="mb">
-                                                                        {item.users.slice(0,3).map((uItem,uIndex)=> {
-                                                                            return(
-                                                                                <React.Fragment key={uIndex}>
-                                                                                    {uItem.image ? <Avatar size="mb" rounded img={uItem.image}/> : <Avatar size="mb" variant={uItem.theme} rounded text={toInitials(uItem.name)}/>}
-                                                                                </React.Fragment>
-                                                                            )
-                                                                        })}
-                                                                        {item.users?.length > 3 && <Avatar variant="slate" size="mb" rounded text={`+${item.users?.length - 3}`}></Avatar>}
-                                                                    </Avatar.Group>
-                                                                :
-                                                                <div className="text-sm text-slate-600 dark:text-slate-400">Only Me</div> 
-                                                                }
-                                                            </div>
                                                             <div className="flex-shrink w-[60px] py-4 first:ps-5 pe-4 text-end">
-                                                                <ItemActionDropdown setShowDetailsModal={setShowDetailsModal} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} />
+                                                                <ItemActionDropdown item={item} setShowDetailsModal={setShowDetailsModal} setSelectedItem={setSelectedItem} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} />
                                                             </div>
                                                         </div>
                                                     )
@@ -781,7 +748,7 @@ const FileManagerPage = () => {
             </div>
         </div>
         <UploadModal show={showUploadModal} setShow={setShowUploadModal} />
-        <FileDetailsModal show={showDetailsModal} setShow={setShowDetailsModal} />
+        <FileDetailsModal show={showDetailsModal} setShow={setShowDetailsModal} selectedItem={selectedItem} />
         <FileCopyModal show={showCopyModal} setShow={setShowCopyModal} />
         <FileMoveModal show={showMoveModal} setShow={setShowMoveModal} />
         <FileShareModal show={showShareModal} setShow={setShowShareModal} />
