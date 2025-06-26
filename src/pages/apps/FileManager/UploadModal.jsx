@@ -42,13 +42,13 @@ const UploadModal = ({show, setShow}) => {
     console.log('Dropped files array:', droppedFiles);
     
     if (droppedFiles.length > 0) {
-      processSelectedFiles(droppedFiles);
+      addFilesToSelection(droppedFiles);
     } else {
       console.log('No files found in drop event');
     }
   };
 
-  // Handle file selection (both files and folders)
+  // Handle file selection (individual files only)
   const handleFileSelection = (event) => {
     console.log('File selection event triggered');
     console.log('Event target:', event.target);
@@ -69,7 +69,79 @@ const UploadModal = ({show, setShow}) => {
       lastModified: f.lastModified
     })));
     
-    processSelectedFiles(files);
+    // Add to existing selection instead of replacing
+    addFilesToSelection(files);
+  };
+
+  // Handle folder selection (folders with directory structure)
+  const handleFolderSelection = (event) => {
+    console.log('Folder selection event triggered');
+    console.log('Event target:', event.target);
+    console.log('Files from folder:', event.target.files);
+    
+    if (!event.target.files || event.target.files.length === 0) {
+      console.log('No folder selected');
+      return;
+    }
+    
+    const files = extractAllFiles(event.target.files);
+    console.log('Extracted folder files:', files);
+    console.log('Folder files with details:', files.map(f => ({
+      name: f.name,
+      size: f.size,
+      type: f.type,
+      path: f.webkitRelativePath || 'root',
+      lastModified: f.lastModified
+    })));
+    
+    // Get folder name from the first file's webkitRelativePath
+    const folderName = files.length > 0 && files[0].webkitRelativePath 
+      ? files[0].webkitRelativePath.split('/')[0] 
+      : 'Unknown Folder';
+    
+    console.log(`Adding ${files.length} files from folder: ${folderName}`);
+    console.log(`Current selection before adding: ${selectedFiles.length} files`);
+    
+    // Add to existing selection instead of replacing
+    addFilesToSelection(files);
+  };
+
+  // Add files to existing selection (allows accumulating from multiple selections)
+  const addFilesToSelection = (newFiles) => {
+    console.log('Adding files to selection:', newFiles);
+    
+    if (!newFiles || newFiles.length === 0) {
+      console.log('No new files to add');
+      return;
+    }
+    
+    // Combine with existing files, avoiding duplicates based on name and size
+    const existingFiles = [...selectedFiles];
+    const filesToAdd = [];
+    
+    newFiles.forEach(newFile => {
+      const exists = existingFiles.some(existing => 
+        existing.name === newFile.name && 
+        existing.size === newFile.size &&
+        (existing.webkitRelativePath || 'root') === (newFile.webkitRelativePath || 'root')
+      );
+      
+      if (!exists) {
+        filesToAdd.push(newFile);
+      } else {
+        console.log('Skipping duplicate file:', newFile.name);
+      }
+    });
+    
+    if (filesToAdd.length === 0) {
+      console.log('No new files to add (all duplicates)');
+      return;
+    }
+    
+    const combinedFiles = [...existingFiles, ...filesToAdd];
+    console.log('Combined files:', combinedFiles.length);
+    
+    processSelectedFiles(combinedFiles);
   };
 
   // Process selected files and build directory structure
@@ -226,7 +298,7 @@ const UploadModal = ({show, setShow}) => {
     });
     
     console.log('Test file created:', testFile);
-    processSelectedFiles([testFile]);
+    addFilesToSelection([testFile]);
   };
 
   // Handle modal close and reset state
@@ -301,22 +373,15 @@ const UploadModal = ({show, setShow}) => {
                                         Drag and drop files or folders here
                                     </h6>
                                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                                        or click to browse and select files/folders
+                                        or use the buttons below to select files or folders<br/>
+                                        <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                                            💡 Click "Select Folders" multiple times to add different folders to your upload
+                                        </span>
                                     </p>
                                     
-                                    {/* Hidden file inputs */}
+                                    {/* Separate file inputs for files and folders */}
                                     <input
                                         ref={fileInputRef}
-                                        type="file"
-                                        multiple
-                                        webkitdirectory=""
-                                        onChange={handleFileSelection}
-                                        className="hidden"
-                                        id="folder-input"
-                                    />
-                                    
-                                    <input
-                                        ref={folderInputRef}
                                         type="file"
                                         multiple
                                         onChange={handleFileSelection}
@@ -324,10 +389,20 @@ const UploadModal = ({show, setShow}) => {
                                         id="files-input"
                                     />
                                     
+                                    <input
+                                        ref={folderInputRef}
+                                        type="file"
+                                        webkitdirectory=""
+                                        multiple
+                                        onChange={handleFolderSelection}
+                                        className="hidden"
+                                        id="folder-input"
+                                    />
+                                    
                                     <div className="flex flex-col sm:flex-row gap-3 justify-center">
                                         <Button
                                             onClick={() => {
-                                                // Clear previous selection
+                                                // Clear the input and trigger file selection
                                                 if (fileInputRef.current) {
                                                     fileInputRef.current.value = '';
                                                     fileInputRef.current.click();
@@ -336,26 +411,47 @@ const UploadModal = ({show, setShow}) => {
                                             size="rg"
                                             variant="primary"
                                             className="cursor-pointer"
+                                            title="Select multiple files at once using Ctrl+click or Shift+click"
                                         >
-                                            <Icon className="mr-2" name="folder-plus" />
-                                            Select Files & Folders
+                                            <Icon className="mr-2" name="file-plus" />
+                                            {selectedFiles.length > 0 ? 'Add More Files' : 'Select Files'}
                                         </Button>
                                         
                                         <Button
-                                            size="rg"
-                                            variant="outline"
                                             onClick={() => {
-                                                // Clear previous selection
+                                                // Clear the input and trigger folder selection
                                                 if (folderInputRef.current) {
                                                     folderInputRef.current.value = '';
                                                     folderInputRef.current.click();
                                                 }
                                             }}
+                                            size="rg"
+                                            variant="outline"
                                             className="cursor-pointer"
+                                            title="Select one folder at a time. Click multiple times to add more folders."
                                         >
-                                            <Icon className="mr-2" name="file-plus" />
-                                            Files Only
+                                            <Icon className="mr-2" name="folder-plus" />
+                                            {selectedFiles.length > 0 ? 'Add More Folders' : 'Select Folders'}
                                         </Button>
+                                        
+                                        {selectedFiles.length > 0 && (
+                                            <Button
+                                                size="rg"
+                                                variant="outline"
+                                                onClick={() => {
+                                                    setSelectedFiles([]);
+                                                    setDirectoryStructure({});
+                                                    setUploadProgress({});
+                                                    setUploadErrors([]);
+                                                    setUploadSuccess(false);
+                                                    console.log('Selection cleared');
+                                                }}
+                                                className="cursor-pointer text-red-600 border-red-300 hover:bg-red-50"
+                                            >
+                                                <Icon className="mr-2" name="trash" />
+                                                Clear All
+                                            </Button>
+                                        )}
                                         
                                         <Button
                                             size="sm"
@@ -367,6 +463,17 @@ const UploadModal = ({show, setShow}) => {
                                             Test Upload
                                         </Button>
                                     </div>
+                                    
+                                    {selectedFiles.length > 0 && (
+                                        <div className="mt-4 text-center">
+                                            <p className="text-sm text-blue-600 dark:text-blue-400">
+                                                � Selected {selectedFiles.length} files from {Object.keys(directoryStructure).length || 1} location(s)
+                                            </p>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                Continue selecting to add more files/folders, or click Upload when ready
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Error Display */}
@@ -402,9 +509,14 @@ const UploadModal = ({show, setShow}) => {
                             {/* Selected Files List */}
                             {selectedFiles.length > 0 && (
                                 <div className="mb-6">
-                                    <h6 className="font-heading font-bold text-base/tighter -tracking-snug text-slate-700 dark:text-white mb-3">
-                                        Selected Files ({selectedFiles.length})
-                                    </h6>
+                                    <div className="flex items-center justify-between mb-3">
+                                        <h6 className="font-heading font-bold text-base/tighter -tracking-snug text-slate-700 dark:text-white">
+                                            Selected Files ({selectedFiles.length})
+                                        </h6>
+                                        <div className="text-sm text-slate-500">
+                                            Total: {formatFileSize(selectedFiles.reduce((sum, file) => sum + file.size, 0))}
+                                        </div>
+                                    </div>
                                     <div className="max-h-60 overflow-y-auto space-y-2">
                                         {selectedFiles.map((file, index) => (
                                             <div key={index} className="flex items-center p-3 rounded border border-gray-200 dark:border-gray-800">
