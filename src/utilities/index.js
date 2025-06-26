@@ -47,3 +47,6 @@ let getInitials = function (name) {
 }
 
 export let toInitials = getInitials;
+
+// Export file utility functions
+export * from './fileUtils';

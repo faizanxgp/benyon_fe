@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Testing Instructions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .code {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .example-structure {
+            background-color: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .feature {
+            background-color: #f0f8f0;
+            padding: 10px;
+            border-left: 4px solid #4caf50;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Multi-Folder & File Upload Implementation</h1>
+    
+    <h2>📁 What Has Been Implemented</h2>
+    
+    <div class="feature">
+        <h3>✅ Enhanced Upload Modal</h3>
+        <p>The UploadModal component now supports:</p>
+        <ul>
+            <li><strong>Individual File Selection:</strong> Choose multiple individual files</li>
+            <li><strong>Folder Selection:</strong> Select entire folders with their complete directory structure</li>
+            <li><strong>Mixed Selection:</strong> Combine both files and folders in a single upload</li>
+            <li><strong>Real-time Preview:</strong> See the directory structure before uploading</li>
+            <li><strong>Progress Tracking:</strong> Individual progress bars for each file</li>
+            <li><strong>File Validation:</strong> Size limits, type checking, and error handling</li>
+        </ul>
+    </div>
+
+    <div class="feature">
+        <h3>✅ API Integration</h3>
+        <p>New API function <code>uploadMultipleFiles()</code> that:</p>
+        <ul>
+            <li>Sends all files as form-data to <code>/files/upload_multiple</code></li>
+            <li>Includes a serialized JSON directory structure</li>
+            <li>Handles authentication with Bearer token</li>
+            <li>Provides proper error handling</li>
+        </ul>
+    </div>
+
+    <div class="feature">
+        <h3>✅ Directory Structure Parsing</h3>
+        <p>Smart directory structure analysis that:</p>
+        <ul>
+            <li>Maps complete folder hierarchies</li>
+            <li>Preserves relative paths</li>
+            <li>Creates JSON structure matching your requirements</li>
+            <li>Handles nested folders and mixed content</li>
+        </ul>
+    </div>    <h2>🔧 How to Test</h2>
+    
+    <ol>
+        <li><strong>Access the File Manager:</strong>
+            <ul>
+                <li>Navigate to: <code>http://localhost:5174/</code></li>
+                <li>Go to "Document Management" in the sidebar (you may need to login first)</li>
+                <li>Click the "Upload" button in the top toolbar</li>
+            </ul>
+        </li>
+        
+        <li><strong>Test File & Folder Upload:</strong>
+            <ul>
+                <li>Use the unified upload interface with drag-and-drop support</li>
+                <li>Click "Select Files & Folders" to choose folders (preserves directory structure)</li>
+                <li>Click "Files Only" to select individual files</li>
+                <li>Drag and drop files/folders directly onto the upload area</li>
+            </ul>
+        </li>
+        
+        <li><strong>Upload Process:</strong>
+            <ul>
+                <li>View selected files with icons, paths, and sizes</li>
+                <li>See the directory structure preview (JSON format)</li>
+                <li>Click "Upload X Files" to start the upload</li>
+                <li>Watch individual progress bars for each file</li>
+                <li>The system automatically falls back to demo mode if backend is unavailable</li>
+            </ul>
+        </li>
+    </ol>
+
+    <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0;">
+        <h4>🛠️ Backend Status</h4>
+        <p><strong>Current API Endpoint:</strong> <code>http://localhost:5000/files/upload_multiple</code></p>
+        <p><strong>Demo Mode:</strong> If the backend server is not running, the upload will automatically switch to demo mode for testing the UI and functionality.</p>
+        <p><strong>To Use Real Backend:</strong> Make sure your backend server is running on port 5000 and has the <code>/files/upload_multiple</code> endpoint implemented.</p>
+    </div>
+
+    <h2>📋 Example Directory Structure Output</h2>
+    
+    <p>When you select folders and files, the system generates a JSON structure like this:</p>
+    
+    <div class="example-structure">
+        <h4>Example Input Files:</h4>
+        <div class="code">documents/pdfs/doc1.pdf
+documents/pdfs/doc2.pdf
+documents/images/img1.jpg
+documents/images/img2.png
+documents/readme.txt
+media/video1.mp4
+media/audio1.mp3
+root_file.txt</div>
+    </div>
+
+    <div class="example-structure">
+        <h4>Generated JSON Structure (sent to server):</h4>
+        <div class="code">{
+  "folders": {
+    "documents": {
+      "folders": {
+        "pdfs": {
+          "files": ["doc1.pdf", "doc2.pdf"],
+          "folders": {}
+        },
+        "images": {
+          "files": ["img1.jpg", "img2.png"],
+          "folders": {}
+        }
+      },
+      "files": ["readme.txt"]
+    },
+    "media": {
+      "files": ["video1.mp4", "audio1.mp3"],
+      "folders": {}
+    }
+  },
+  "files": ["root_file.txt"]
+}</div>
+    </div>
+
+    <h2>🛠️ Backend Endpoint Requirements</h2>
+    
+    <p>Your backend should expect:</p>
+      <div class="code"><strong>POST /files/upload_multiple</strong>
+
+<strong>Headers:</strong>
+- Authorization: Bearer {token}
+- Content-Type: multipart/form-data
+
+<strong>Form Data:</strong>
+- file: [File object] (multiple entries with same key name)
+- file: [File object] (multiple entries with same key name)
+- file: [File object] (multiple entries with same key name)
+- directory_structure: {JSON string} (serialized structure)
+
+<strong>Backend Code Example:</strong>
+files = data.getlist("file")  # Gets all files with key "file"
+
+<strong>Example directory_structure field:</strong>
+{"folders":{"documents":{"folders":{"pdfs":{"files":["doc1.pdf"]}}}}}</div>
+
+    <h2>🎯 Key Features</h2>
+    
+    <ul>
+        <li><strong>File Type Icons:</strong> Automatic icon selection based on file extensions</li>
+        <li><strong>Size Validation:</strong> 100MB per file, 1GB total limit (configurable)</li>
+        <li><strong>Error Handling:</strong> Clear error messages for various failure scenarios</li>
+        <li><strong>Progress Tracking:</strong> Real-time upload progress for each file</li>
+        <li><strong>Responsive UI:</strong> Works on desktop and mobile devices</li>
+        <li><strong>Dark Mode Support:</strong> Adapts to the application's theme</li>
+        <li><strong>Accessibility:</strong> Keyboard navigation and screen reader support</li>
+    </ul>
+
+    <h2>🔄 File Browser Support</h2>
+    
+    <p>The folder selection feature uses the <code>webkitdirectory</code> attribute, which is supported in:</p>
+    <ul>
+        <li>✅ Chrome/Chromium (full support)</li>
+        <li>✅ Firefox (full support)</li>
+        <li>✅ Safari (full support)</li>
+        <li>✅ Edge (full support)</li>
+    </ul>
+
+    <h2>🔧 Customization Options</h2>
+    
+    <p>You can easily customize:</p>
+    <ul>
+        <li><strong>File Size Limits:</strong> Modify in <code>validateFiles()</code> function</li>
+        <li><strong>Allowed File Types:</strong> Add to validation options</li>
+        <li><strong>Progress Animation:</strong> Adjust intervals and animations</li>
+        <li><strong>UI Colors & Styling:</strong> Modify Tailwind classes</li>
+        <li><strong>Error Messages:</strong> Customize validation messages</li>
+    </ul>
+
+    <div style="margin-top: 40px; padding: 20px; background-color: #fff3cd; border-radius: 5px;">
+        <h3>🚀 Ready to Use!</h3>
+        <p>The upload functionality is now fully implemented and ready for testing. Navigate to the Document Management page to try it out!</p>
+    </div>
+</body>
+</html>

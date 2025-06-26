@@ -16,7 +16,7 @@ export const setLoadingCallbacks = (showCallback, hideCallback) => {
 // const BEARER = 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtRHgzSGkwcU44Y24tSmVyNUNfTUVGc0NUUUd3RVVLZHRHVi1ITmptS2NjIn0.eyJleHAiOjE3NTA1OTAwOTgsImlhdCI6MTc1MDU3MjA5OCwianRpIjoib25ydHJvOmEwM2Y4Mzg3LTk2ODYtNGU1OS05YTBhLTQ3NGQxMmViZmY0ZiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvdGVhbV9vbmxpbmUiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZjAxNDU3MTktZTc2NS00ZDE1LTgxOTktODYyM2I5YWZjNWVhIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYmVueW9uX2ZlIiwic2lkIjoiNDcwYjQyMWMtNWJhZi00ZGM0LWI5YmItNzkyZmFkYmVkY2VmIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLXRlYW1fb25saW5lIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJiZW55b25fZmUiOnsicm9sZXMiOlsiYWRtaW4iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6Ikhhc3NhYW4gUWF5eXVtIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiaGFzc2FhbnFAZ21haWwuY29tIiwiZ2l2ZW5fbmFtZSI6Ikhhc3NhYW4iLCJmYW1pbHlfbmFtZSI6IlFheXl1bSIsImVtYWlsIjoiaGFzc2FhbnFAZ21haWwuY29tIn0.St1Wb53NR6k1ZbIOstVAZ7KF4kztqeJ0Au0CXcO7PHlu8KlTduzKBVq2hUju2Mq-kDZlE9toPgfc0x0oDPo1ISSpKHOQ5AuXeu5NY1HWtUqXUhH_0JlYO8T6YqXseTKVUKUgqCmACmxvWw0SjJ1CL2tp7UpUoqXMHL03mBhwzOvd5tHY__dxWpHYztEkVbuFe3lrrjvHok8wTHdScre4li7347WNgfV4P2LyfJITyTst2ooAudbC2Ka4lmTqmghBRFRmuH5EKOSq2Tk2VpOREz86tS2joL0AaJqBAMVRdMvqsRdlFJuhIMcp-hWf9tiBf2m1wv5Uk9wIwpL_0HkZIA';
 
 // Dynamic bearer token that can be updated after login
-let BEARER = localStorage.getItem('access_token') || 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtRHgzSGkwcU44Y24tSmVyNUNfTUVGc0NUUUd3RVVLZHRHVi1ITmptS2NjIn0.eyJleHAiOjE3NTA1OTAwOTgsImlhdCI6MTc1MDU3MjA5OCwianRpIjoib25ydHJvOmEwM2Y4Mzg3LTk2ODYtNGU1OS05YTBhLTQ3NGQxMmViZmY0ZiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvdGVhbV9vbmxpbmUiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZjAxNDU3MTktZTc2NS00ZDE1LTgxOTktODYyM2I5YWZjNWVhIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYmVueW9uX2ZlIiwic2lkIjoiNDcwYjQyMWMtNWJhZi00ZGM0LWI5YmItNzkyZmFkYmVkY2VmIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLXRlYW1fb25saW5lIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJiZW55b25fZmUiOnsicm9sZXMiOlsiYWRtaW4iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6Ikhhc3NhYW4gUWF5eXVtIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiaGFzc2FhbnFAZ21haWwuY29tIiwiZ2l2ZW5fbmFtZSI6Ikhhc3NhYW4iLCJmYW1pbHlfbmFtZSI6IlFheXl1bSIsImVtYWlsIjoiaGFzc2FhbnFAZ21haWwuY29tIn0.St1Wb53NR6k1ZbIOstVAZ7KF4kztqeJ0Au0CXcO7PHlu8KlTduzKBVq2hUju2Mq-kDZlE9toPgfc0x0oDPo1ISSpKHOQ5AuXeu5NY1HWtUqXUhH_0JlYO8T6YqXseTKVUKUgqCmACmxvWw0SjJ1CL2tp7UpUoqXMHL03mBhwzOvd5tHY__dxWpHYztEkVbuFe3lrrjvHok8wTHdScre4li7347WNgfV4P2LyfJITyTst2ooAudbC2Ka4lmTqmghBRFRmuH5EKOSq2Tk2VpOREz86tS2joL0AaJqBAMVRdMvqsRdlFJuhIMcp-hWf9tiBf2m1wv5Uk9wIwpL_0HkZIA';
+let BEARER = localStorage.getItem('access_token') || 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtRHgzSGkwcU44Y24tSmVyNUNfTUVGc0NUUUd3RVVLZHRHVi1ITmptS2NjIn0.eyJleHAiOjE3NTA1OTAwOTgsImlhdCI6MTc1MDU3MjA5OCwianRpIjoib25ydHJvOmEwM2Y4Mzg3LTk2ODYtNGU1OS05YTBhLTQ3NGQxMmViZmY0ZiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvdGVhbV9vbmxpbmUiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZjAxNDU3MTktZTc2NS00ZDE1LTgxOTktODYyM2I5YWZjNWVhIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYmVueW9uX2ZlIiwic2lkIjoiNDcwYjQyMWMtNWJhZi00ZGM0LWI5YmItNzkyZmFkYmVkY2VmIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLXRlYW1fb25saW5lIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJiZW55b25fZmUiOnsicm9sZXMiOlsiYWRtaW4iXX0sImFjY291bnQiOnsicm9zZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6Ikhhc3NhYW4gUWF5eXVtIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiaGFzc2FhbnFAZ21haWwuY29tIiwiZ2l2ZW5fbmFtZSI6Ikhhc3NhYW4iLCJmYW1pbHlfbmFtZSI6IlFheXl1bSIsImVtYWlsIjoiaGFzc2FhbnFAZ21haWwuY29tIn0.St1Wb53NR6k1ZbIOstVAZ7KF4kztqeJ0Au0CXcO7PHlu8KlTduzKBVq2hUju2Mq-kDZlE9toPgfc0x0oDPo1ISSpKHOQ5AuXeu5NY1HWtUqXUhH_0JlYO8T6YqXseTKVUKUgqCmACmxvWw0SjJ1CL2tp7UpUoqXMHL03mBhwzOvd5tHY__dxWpHYztEkVbuFe3lrrjvHok8wTHdScre4li7347WNgfV4P2LyfJITyTst2ooAudbC2Ka4lmTqmghBRFRmuH5EKOSq2Tk2VpOREz86tS2joL0AaJqBAMVRdMvqsRdlFJuhIMcp-hWf9tiBf2m1wv5Uk9wIwpL_0HkZIA';
 
 // Function to update the bearer token
 export const updateBearerToken = (newToken) => {
@@ -267,6 +267,85 @@ export const searchFiles = (searchStr) => {
   const formData = new FormData();
   formData.append("search_str", searchStr);
   return api.post("/files/search_files", formData);
+};
+
+// Upload multiple files and folders with directory structure
+export const uploadMultipleFiles = (files, directoryStructure) => {
+  console.log('uploadMultipleFiles called with:', {
+    fileCount: files.length,
+    files: files.map(f => ({ name: f.name, size: f.size, path: f.webkitRelativePath || f.name })),
+    directoryStructure
+  });
+
+  const formData = new FormData();
+  
+  // Append all files to form data - use "file" as the key name for each file
+  // Backend expects: files = data.getlist("file")
+  files.forEach((file, index) => {
+    formData.append('file', file, file.name);
+    console.log(`Added file ${index}:`, {
+      key: 'file',
+      name: file.name, 
+      size: file.size,
+      type: file.type,
+      path: file.webkitRelativePath || 'root'
+    });
+  });
+  
+  // Append the directory structure as a serialized JSON string
+  const structureJson = JSON.stringify(directoryStructure);
+  formData.append('directory_structure', structureJson);
+  console.log('Directory structure JSON:', structureJson);
+  
+  // Debug: Log all form data entries
+  console.log('FormData contents:');
+  for (let pair of formData.entries()) {
+    if (pair[1] instanceof File) {
+      console.log(`${pair[0]}:`, `File(${pair[1].name}, ${pair[1].size} bytes)`);
+    } else {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
+  }
+  
+  console.log('Making API call to /files/upload_multiple');
+  
+  return api.post("/files/upload_multiple", formData, {
+    headers: {
+      // Don't set Content-Type manually, let browser set it with boundary
+      // 'Content-Type': 'multipart/form-data',
+    },
+    timeout: 30000, // 30 second timeout for uploads
+  });
+};
+
+// Demo upload function for testing without backend
+export const uploadMultipleFilesDemo = (files, directoryStructure) => {
+  console.log('DEMO MODE: uploadMultipleFiles called with:', {
+    fileCount: files.length,
+    files: files.map(f => ({ name: f.name, size: f.size, path: f.webkitRelativePath || f.name })),
+    directoryStructure
+  });
+
+  console.log('DEMO: FormData would contain:');
+  files.forEach((file, index) => {
+    console.log(`DEMO: file: File(${file.name}, ${file.size} bytes)`);
+  });
+  console.log('DEMO: directory_structure:', JSON.stringify(directoryStructure));
+
+  // Simulate API call delay
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      // Simulate success response
+      resolve({
+        data: {
+          message: 'Files uploaded successfully (demo mode)',
+          uploadedFiles: files.length,
+          directoryStructure: directoryStructure,
+          receivedFiles: files.map(f => f.name)
+        }
+      });
+    }, 2000);
+  });
 };
 
 /**
