@@ -97,7 +97,7 @@ const FileDetailsModal = ({show, setShow, selectedItem}) => {
                                     <div className="text-sm/5 text-slate-600 dark:text-slate-400">
                                         {item.is_dir 
                                             ? `${item.num_files || 0} files, ${item.num_subdirs || 0} folders`
-                                            : `File size: ${formatFileSize(item.size_bytes || item.size || 0)}`}
+                                            : `${formatFileSize(item.size_bytes || item.size || 0)}`}
                                     </div>
                                 </div>
                                 <div className="py-2 flex flex-wrap xs:flex-nowrap xs:py-1.5">

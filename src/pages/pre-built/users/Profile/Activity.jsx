@@ -55,7 +55,7 @@ const Activity = ({pageAside}) => {
         <div className="flex justify-between items-center pb-6 sm:pb-10 gap-x-6">
             <div className="relative">
                 <h5 className="text-2xl font-heading mb-2 font-bold leading-tighter tracking-tight text-slate-700 dark:text-white">Login Activity</h5>
-                <p className="text-slate-600 dark:text-slate-400">Here is your last 20 login activities log. 
+                <p className="text-slate-600 dark:text-slate-400">Here is your last 10 login activities log. 
                     <Tooltip placement="right" rtlPlacement="left" content="Stored activities whenever you login into account">
                         <Icon className="text-slate-400 relative top-0.5" name="info" />
                     </Tooltip>

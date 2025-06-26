@@ -76,9 +76,17 @@ const UserDropdown = () => {
                     </li>
                     <li>
                         <Menu.Item as={Fragment}>
-                            <Link className="relative px-7 py-2.5 flex items-center rounded-[inherit] text-sm leading-5 font-medium text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 transition-all duration-300" to="/user-profile-regular?tab=3">
-                                <Icon className="text-lg leading-none w-7" name="setting-alt" />
-                                <span>Account Setting</span>
+                            <Link className="relative px-7 py-2.5 flex items-center rounded-[inherit] text-sm leading-5 font-medium text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 transition-all duration-300" to="/user-profile-regular?tab=1">
+                                <Icon className="text-lg leading-none w-7" name="activity" />
+                                <span>Account Activity</span>
+                            </Link>
+                        </Menu.Item>
+                    </li>
+                    <li>
+                        <Menu.Item as={Fragment}>
+                            <Link className="relative px-7 py-2.5 flex items-center rounded-[inherit] text-sm leading-5 font-medium text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 transition-all duration-300" to="/user-profile-regular?tab=2">
+                                <Icon className="text-lg leading-none w-7" name="shield-check" />
+                                <span>Security Settings</span>
                             </Link>
                         </Menu.Item>
                     </li>
