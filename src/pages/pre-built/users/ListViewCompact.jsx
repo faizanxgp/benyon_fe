@@ -496,7 +496,7 @@ const UsersListCompactPage = () => {
                     </div>
                 </div>
             )}
-            <div className="p-5 relative">
+            <div className="p-4 relative">
                 <div className="flex items-center justify-between relative">
                     <div className="flex items-center gap-4">
                         <div className="relative w-[132px]">
@@ -553,25 +553,24 @@ const UsersListCompactPage = () => {
                     </div>
                 </div>
             </div>
-            {error && <div className="p-4 text-center text-red-500">{error}</div>}
-            <table className="border-collapse w-full border-gray-300 dark:border-gray-900"> 
+            {error && <div className="p-4 text-center text-red-500">{error}</div>}            <table className="border-collapse w-full border-gray-300 dark:border-gray-900"> 
                 <thead>
                     <tr>
-                        <th className="py-2 px-2 first:ps-6 last:pe-6 border-b border-t border-gray-300 dark:border-gray-900 text-start w-12 sm:w-13">
+                        <th className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-t border-gray-300 dark:border-gray-900 text-start w-10 sm:w-11">
                             <div className="flex items-center">
                                 <CheckBox size="sm" id="uid-all" />
                             </div>
                         </th>
-                        <th className="py-2 px-2 first:ps-6 last:pe-6 border-b border-t border-gray-300 dark:border-gray-900 text-start">
+                        <th className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-t border-gray-300 dark:border-gray-900 text-start">
                             <span className="block text-sm leading-relaxed text-slate-400 font-normal">Full Name</span>
                         </th>
-                        <th className="py-2 px-2 first:ps-6 last:pe-6 border-b border-t border-gray-300 dark:border-gray-900 text-start hidden lg:table-cell">
+                        <th className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-t border-gray-300 dark:border-gray-900 text-start hidden lg:table-cell">
                             <span className="block text-sm leading-relaxed text-slate-400 font-normal">Username</span>
                         </th>
-                        <th className="py-2 px-2 first:ps-6 last:pe-6 border-b border-t border-gray-300 dark:border-gray-900 text-start hidden md:table-cell">
+                        <th className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-t border-gray-300 dark:border-gray-900 text-start hidden md:table-cell">
                             <span className="block text-sm leading-relaxed text-slate-400 font-normal">Role</span>
                         </th>
-                        <th className="py-2 px-2 first:ps-6 last:pe-6 border-b border-t border-gray-300 dark:border-gray-900 text-start hidden sm:table-cell">
+                        <th className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-t border-gray-300 dark:border-gray-900 text-start hidden sm:table-cell">
                             <span className="block text-sm leading-relaxed text-slate-400 font-normal">Email</span>
                         </th>
                         {/* <th className="py-2 px-2 first:ps-6 last:pe-6 border-b border-t border-gray-300 dark:border-gray-900 text-start hidden md:table-cell">
@@ -585,16 +584,13 @@ const UsersListCompactPage = () => {
                         </th>
                         <th className="py-2 px-2 first:ps-6 last:pe-6 border-b border-t border-gray-300 dark:border-gray-900 text-start hidden 2xl:table-cell">
                             <span className="block text-sm leading-relaxed text-slate-400 font-normal">Last Login</span>
-                        </th> */}
-                        <th className="py-2 px-2 first:ps-6 last:pe-6 border-b border-t border-gray-300 dark:border-gray-900 text-start">
+                        </th> */}                        <th className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-t border-gray-300 dark:border-gray-900 text-start">
                             <span className="block text-sm leading-relaxed text-slate-400 font-normal">Status</span>
                         </th>
-                        {/* <th className="py-2 px-2 first:ps-6 last:pe-6 border-b border-t border-gray-300 dark:border-gray-900 text-end max-w-[3.75rem]">
-                            <OptionsDropdown />
-                        </th> */}
-                        <th className="py-2 px-2 first:ps-6 last:pe-6 border-b border-t border-gray-300 dark:border-gray-900 text-end max-w-[3.75rem]">
-                            <Button size="xs" icon onClick={() => setShowCreateUserDialog(true)}>
-                                <Icon className="text-sm/4.5" name="plus" />
+                        <th className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-t border-gray-300 dark:border-gray-900 text-end min-w-[140px]">
+                            <Button size="sm" variant="primary" onClick={() => setShowCreateUserDialog(true)} className="inline-flex items-center">
+                                <Icon className="text-sm/4.5 me-2" name="plus" />
+                                <span>Add User</span>
                             </Button>
                         </th>
                     </tr>
@@ -602,31 +598,24 @@ const UsersListCompactPage = () => {
                 <tbody>
                 {/* {userData.map((item, index) => { */}
                 {users.map((item, index) => {
-                    return(
-                        <tr key={index} className="transition-all duration-300 hover:bg-gray-50 hover:dark:bg-gray-1000 group">
-                            <td className="py-2 px-2 first:ps-6 last:pe-6 border-b border-gray-300 dark:border-gray-900 w-12 sm:w-13">
+                    return(                        <tr key={index} className="transition-all duration-300 hover:bg-gray-50 hover:dark:bg-gray-1000 group">
+                            <td className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-gray-300 dark:border-gray-900 w-10 sm:w-11">
                                 <div className="flex items-center">
                                     <CheckBox size="sm" id={item.id} />
                                 </div>
                             </td>
-                            {/* <td className="py-2 px-2 first:ps-6 last:pe-6 border-b border-gray-300 dark:border-gray-900">
-                                <div className="flex items-center">
-                                    {item.img ? <Avatar size="sm" rounded img={item.img}/> : <Avatar variant={item.theme} size="sm" rounded text={toInitials(item.name)}/>}
-                                    <span className="ms-3 block text-xs font-medium leading-6 text-slate-700 dark:text-white">{item.name}</span>
-                                </div>
-                            </td> */}
-                            <td className="py-2 px-2 first:ps-6 last:pe-6 border-b border-gray-300 dark:border-gray-900">
+                            <td className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-gray-300 dark:border-gray-900">
                                 <div className="flex items-center">
                                     <span className="block text-xs font-medium leading-6 text-slate-700 dark:text-white">{item.name}</span>
                                 </div>
                             </td>
-                            <td className="py-2 px-2 first:ps-6 last:pe-6 border-b border-gray-300 dark:border-gray-900 hidden lg:table-cell">
+                            <td className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-gray-300 dark:border-gray-900 hidden lg:table-cell">
                                 <span className="text-sm text-slate-400">{item.username}</span>
                             </td>
-                            <td className="py-2 px-2 first:ps-6 last:pe-6 border-b border-gray-300 dark:border-gray-900 hidden md:table-cell">
+                            <td className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-gray-300 dark:border-gray-900 hidden md:table-cell">
                                 <span className="text-sm text-slate-400">{item.role}</span>
                             </td>
-                            <td className="py-2 px-2 first:ps-6 last:pe-6 border-b border-gray-300 dark:border-gray-900 hidden sm:table-cell">
+                            <td className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-gray-300 dark:border-gray-900 hidden sm:table-cell">
                                 <span className="text-sm text-slate-400">{item.email}</span>
                             </td>
                             {/* <td className="py-2 px-2 first:ps-6 last:pe-6 border-b border-gray-300 dark:border-gray-900 hidden md:table-cell">
@@ -647,14 +636,13 @@ const UsersListCompactPage = () => {
                             </td> */}
                             {/* <td className="py-2 px-2 first:ps-6 last:pe-6 border-b border-gray-300 dark:border-gray-900 hidden 2xl:table-cell">
                                 <span className="text-sm text-slate-400">{item.lastLogin}</span>
-                            </td> */}
-                            <td className="py-2 px-2 first:ps-6 last:pe-6 border-b border-gray-300 dark:border-gray-900">
+                            </td> */}                            <td className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-gray-300 dark:border-gray-900">
                                 {item.status === "Active" && <span className="text-sm font-medium text-green-600">Active</span>}
                                 {item.status === "Inactive" && <span className="text-sm font-medium text-cyan-600">Inactive</span>}
                                 {item.status === "Pending" && <span className="text-sm font-medium text-yellow-600">Pending</span>}
                                 {item.status === "Suspend" && <span className="text-sm font-medium text-red-600">Suspend</span>}
                             </td>
-                            <td className="py-2 px-2 first:ps-6 last:pe-6 border-b border-gray-300 dark:border-gray-900 text-end max-w-[3.75rem]">
+                            <td className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-gray-300 dark:border-gray-900 text-end min-w-[140px]">
                                 <ul className="relative flex items-center justify-end -me-2">
                                     <li className="bg-gray-50 dark:bg-gray-1000 px-0.5">
                                         <Tooltip placement="top" content="Suspend">
@@ -813,9 +801,8 @@ const UsersListCompactPage = () => {
                     className="border rounded p-2 w-full"
                     value={newUser.lastName}
                     onChange={e => setNewUser({ ...newUser, lastName: e.target.value })}
-                />
-                </div>
-                <div className="mb-3">
+                />                </div>
+                <div className="mb-3 hidden">
                 <label className="block mb-1">Profile Pic URL</label>
                 {/* <input name="profilePic" className="border rounded p-2 w-full" /> */}
                 <input
@@ -847,7 +834,7 @@ const UsersListCompactPage = () => {
                     className={`px-4 py-2 rounded text-white ${
                         createUserLoading 
                             ? 'bg-gray-400 cursor-not-allowed' 
-                            : 'bg-blue-600 hover:bg-blue-700'
+                            : 'bg-red-600 hover:bg-red-700'
                     }`}
                 >
                     {createUserLoading ? "Creating..." : "Create"}

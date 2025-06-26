@@ -1,23 +1,8 @@
-import React, {useState} from 'react'
+import React from 'react'
 import { Icon, Progress } from '../../../componenets'
 import SimpleBar from 'simplebar-react'
 
-import { Menu } from '@headlessui/react';
-import { usePopper } from 'react-popper';
-import { useTheme } from "../../../layout/context";
-
-const Aside = ({show,setShow}) => {
-    const theme = useTheme();
-    let [dropdownToggle, setDropdownToggle] = useState()
-    let [dropdownContent, setDropdownContent] = useState()
-    let { styles, attributes } = usePopper(dropdownToggle, dropdownContent, {
-        placement : theme.direction === "rtl" ? "top-start" : "top-end",
-        modifiers: [
-            {name: 'offset', options: { offset: [0, -4]}},
-            {name: 'preventOverflow', options: { padding: 8 }},
-        ],
-    })
-    const menu = [
+const Aside = ({show,setShow}) => {    const menu = [
         {
             icon:"home-alt",
             text: "Home",
@@ -25,12 +10,7 @@ const Aside = ({show,setShow}) => {
         },
         {
             icon:"file-docs",
-            text: "Files",
-            sub: [
-                {text: "New Files"},
-                {text: "This Months"},
-                {text: "Older Files"},
-            ]
+            text: "Newly Added",
         },
         {
             icon:"star",
@@ -39,14 +19,6 @@ const Aside = ({show,setShow}) => {
         {
             icon:"share-alt",
             text: "Shared",
-        },
-        {
-            icon:"trash-alt",
-            text: "Recovery",
-        },
-        {
-            icon:"setting-alt",
-            text: "Settings",
         },
     ]
     
@@ -83,52 +55,7 @@ const Aside = ({show,setShow}) => {
                         </h6>
                         <Progress>
                             <Progress.Bar variant="primary" progress="5%" />
-                        </Progress>
-                        <div className="text-xs font-medium text-slate-400 mt-4">12.47 GB of 50 GB used</div>
-                        <div className="mt-1">
-                            <a href="#link" onClick={(e)=> e.preventDefault()} className="text-xs/none font-medium whitespace-nowrap text-primary-600 hover:text-primary-700 transition-all duration-300">Upgrade Storage</a>
-                        </div>
-                    </div>
-                    <div className="border-t border-gray-300 dark:border-gray-900 p-2">
-                        <Menu as="div" className="inline-flex relative w-full">
-                            {({ open }) => (
-                                <>
-                                    <Menu.Button as='div' className={`inline-flex w-full ${open ? ' active' : ''}`} ref={setDropdownToggle}>
-                                        <button className="flex items-center justify-between py-3 px-5 w-full">
-                                            <div className="text-start">
-                                                <div className="text-sm/5 font-bold text-slate-700 dark:text-white mb-1">Personal</div>
-                                                <div className="text-xs/4 text-slate-400">Only you</div>
-                                            </div>
-                                            <em className="text-base/none -me-1 text-slate-600 ni ni-unfold-more"></em>
-                                        </button>
-                                    </Menu.Button>
-                                    <Menu.Items modal={false} ref={setDropdownContent} style={styles.popper} {...attributes.popper} className="absolute border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 rounded-md shadow z-[1000] min-w-[160px]">
-                                        <ul className="py-2">
-                                            <li className="group">
-                                                <Menu.Item as="button" className="w-full relative px-5 py-2.5 flex items-center rounded-[inherit] text-xs leading-5 font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 hover:bg-slate-50 hover:dark:bg-gray-900 transition-all duration-300">
-                                                    <span>Team Plan</span>
-                                                    <em className="hidden group-[.active]:block text-xs font-medium leading-none absolute top-1/2 end-4 -translate-y-1/2 ni ni-check-thick"></em>
-                                                </Menu.Item>
-                                            </li>
-                                            <li className="group active">
-                                                <Menu.Item as="button" className="w-full relative px-5 py-2.5 flex items-center rounded-[inherit] text-xs leading-5 font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 hover:bg-slate-50 hover:dark:bg-gray-900 transition-all duration-300">
-                                                    <span>Personal</span>
-                                                    <em className="hidden group-[.active]:block text-xs font-medium leading-none absolute top-1/2 end-4 -translate-y-1/2 ni ni-check-thick"></em>
-                                                </Menu.Item>
-                                            </li>
-                                            <li className="block border-t border-gray-300 dark:border-gray-900 my-2"></li>
-                                            <li className="group">
-                                                <Menu.Item as="button" className="w-full relative px-5 py-2.5 flex items-center rounded-[inherit] text-xs leading-5 font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 hover:bg-slate-50 hover:dark:bg-gray-900 transition-all duration-300">
-                                                    <span>Upgrade Plan</span>
-                                                    <em className="hidden group-[.active]:block text-xs font-medium leading-none absolute top-1/2 end-4 -translate-y-1/2 ni ni-check-thick"></em>
-                                                </Menu.Item>
-                                            </li>
-                                        </ul>
-                                    </Menu.Items>
-                                </>
-                            )}
-                        </Menu>
-                        
+                        </Progress>                        <div className="text-xs font-medium text-slate-400 mt-4">12.47 GB of 50 GB used</div>
                     </div>
                 </div>
             </SimpleBar>

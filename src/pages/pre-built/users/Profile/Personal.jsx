@@ -1,13 +1,23 @@
 import React, { Fragment, useState, useEffect } from 'react'
-import { Dialog, Transition, Tab } from '@headlessui/react'
-import { Button, Form, Icon, Input, Select, Switch, Picker } from '../../../../componenets'
-import { getUsername, retrieveUserDetails } from '../../../../services/api'
+import { Dialog, Transition } from '@headlessui/react'
+import { Button, Form, Icon, Input, Select, Switch, Picker, Alert } from '../../../../componenets'
+import { getUsername, retrieveUserDetails, updateUserProfile } from '../../../../services/api'
 
 const Personal = ({pageAside}) => {
     let [isOpen, setIsOpen] = useState(false)
     const [userDetails, setUserDetails] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    
+    // Form state
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        address: ''
+    })
+    const [updateLoading, setUpdateLoading] = useState(false)
+    const [updateSuccess, setUpdateSuccess] = useState(false)
+    const [updateError, setUpdateError] = useState('')
 
     // Fetch user details when component mounts
     useEffect(() => {
@@ -20,10 +30,14 @@ const Personal = ({pageAside}) => {
                     setError('No username found in token')
                     setLoading(false)
                     return
-                }
-
-                const response = await retrieveUserDetails(username)
+                }                const response = await retrieveUserDetails(username)
                 setUserDetails(response.data.detail)
+                // Populate form data
+                setFormData({
+                    firstName: response.data.detail?.firstName || '',
+                    lastName: response.data.detail?.lastName || '',
+                    address: response.data.detail?.address || ''
+                })
                 setError(null)
             } catch (err) {
                 console.error('Error fetching user details:', err)
@@ -35,9 +49,7 @@ const Personal = ({pageAside}) => {
         }
 
         fetchUserDetails()
-    }, [])
-
-    // Helper function to format timestamp
+    }, [])    // Helper function to format timestamp
     const formatDate = (timestamp) => {
         if (!timestamp) return 'Not available'
         return new Date(timestamp).toLocaleDateString('en-US', {
@@ -45,6 +57,72 @@ const Personal = ({pageAside}) => {
             month: 'long',
             day: 'numeric'
         })
+    }
+
+    // Handle form input changes
+    const handleInputChange = (field, value) => {
+        setFormData(prev => ({
+            ...prev,
+            [field]: value
+        }))
+        // Clear any previous error when user starts typing
+        if (updateError) {
+            setUpdateError('')
+        }
+    }    // Handle profile update
+    const handleUpdateProfile = async () => {
+        try {
+            setUpdateLoading(true)
+            setUpdateError('')
+            
+            const username = getUsername()
+            if (!username) {
+                setUpdateError('Username not found')
+                return
+            }
+
+            // Prepare update data
+            const updateData = {
+                firstName: formData.firstName.trim(),
+                lastName: formData.lastName.trim(),
+                address: formData.address.trim()
+            }
+
+            // Make API call to update profile
+            await updateUserProfile(username, updateData)
+            
+            // Update local state
+            setUserDetails(prev => ({
+                ...prev,
+                ...updateData
+            }))
+            
+            setUpdateSuccess(true)
+            
+            // Close modal after 2 seconds
+            setTimeout(() => {
+                setUpdateSuccess(false)
+                setIsOpen(false)
+            }, 2000)
+            
+        } catch (err) {
+            console.error('Error updating profile:', err)
+            setUpdateError(err.message || 'Failed to update profile. Please try again.')
+        } finally {
+            setUpdateLoading(false)
+        }
+    }
+
+    // Reset form when modal opens
+    const openModal = () => {
+        setFormData({
+            firstName: userDetails?.firstName || '',
+            lastName: userDetails?.lastName || '',
+            address: userDetails?.address || ''
+        })
+        setUpdateError('')
+        setUpdateSuccess(false)
+        setIsOpen(true)
     }
 
     // Loading state
@@ -78,69 +156,35 @@ const Personal = ({pageAside}) => {
                     }}
                 >
                     <Icon className="text-xl" name="menu-alt-r" />
-                </Button.Zoom>
-            </div>
-        </div>
-
-        {/* User Account Information */}
+                </Button.Zoom>            </div>
+        </div>        {/* User Information */}
         <div className="mb-8 last:mb-0">
-            <div className="py-2 px-5 bg-gray-100 dark:bg-gray-900 rounded">
-                <h6 className="text-slate-400 whitespace-nowrap uppercase font-bold text-xxs tracking-relaxed leading-tight">Account Information</h6>
-            </div>
-            
             {/* Username */}
-            <div className="modal-toggle group px-5 py-4 md:py-6 flex items-center border-b last:border-b-0 border-gray-200 dark:border-gray-800" onClick={() => setIsOpen(true)}>
+            <div className="group px-5 py-4 md:py-6 flex items-center border-b last:border-b-0 border-gray-200 dark:border-gray-800">
                 <div className="md:flex md:items-center flex-grow">
-                    <span className="text-sm/6 text-slate-400 group-hover:text-slate-600 group-hover:dark:text-slate-300 transition-all duration-300 block md:w-1/2">Username</span>
-                    <span className="text-sm/6 text-slate-600 group-hover:text-slate-700 dark:text-white group-hover:dark:text-slate-200 transition-all duration-300 block md:w-1/2">{userDetails?.username || 'Not available'}</span>
-                </div>
-                <div className="md:flex md:items-center flex-grow-0 ms-auto md:justify-end md:w-[200px] md:text-end">
-                    <span className="inline-flex items-center justify-center isolate relative h-8 w-8 px-1.5 before:content-[''] before:absolute before:-z-[1] before:h-5 before:w-5 group-hover:before:h-8 group-hover:before:w-8 before:rounded-full before:opacity-0 group-hover:before:opacity-100 before:transition-all before:duration-300 before:-translate-x-1/2  before:-translate-y-1/2 before:top-1/2 before:left-1/2 before:bg-gray-200 before:dark:bg-gray-900 text-slate-400 group-hover:text-slate-600 group-hover:dark:text-white">
-                        <Icon className="text-base rtl:-scale-x-100" name="forward-ios" />
-                    </span>
+                    <span className="text-sm/6 text-slate-400 block md:w-1/2">Username</span>
+                    <span className="text-sm/6 text-slate-600 dark:text-white block md:w-1/2">{userDetails?.username || 'Not available'}</span>
                 </div>
             </div>
-        </div>
 
-        {/* Personal Details */}
-        <div className="mb-8 last:mb-0">
-            <div className="py-2 px-5 bg-gray-100 dark:bg-gray-900 rounded">
-                <h6 className="text-slate-400 whitespace-nowrap uppercase font-bold text-xxs tracking-relaxed leading-tight">Personal Details</h6>
-            </div>
-            
             {/* First Name */}
-            <div className="modal-toggle group px-5 py-4 md:py-6 flex items-center border-b last:border-b-0 border-gray-200 dark:border-gray-800" onClick={() => setIsOpen(true)}>
+            <div className="group px-5 py-4 md:py-6 flex items-center border-b last:border-b-0 border-gray-200 dark:border-gray-800">
                 <div className="md:flex md:items-center flex-grow">
-                    <span className="text-sm/6 text-slate-400 group-hover:text-slate-600 group-hover:dark:text-slate-300 transition-all duration-300 block md:w-1/2">First Name</span>
-                    <span className="text-sm/6 text-slate-600 group-hover:text-slate-700 dark:text-white group-hover:dark:text-slate-200 transition-all duration-300 block md:w-1/2">{userDetails?.firstName || 'Not provided'}</span>
-                </div>
-                <div className="md:flex md:items-center flex-grow-0 ms-auto md:justify-end md:w-[200px] md:text-end">
-                    <span className="inline-flex items-center justify-center isolate relative h-8 w-8 px-1.5 before:content-[''] before:absolute before:-z-[1] before:h-5 before:w-5 group-hover:before:h-8 group-hover:before:w-8 before:rounded-full before:opacity-0 group-hover:before:opacity-100 before:transition-all before:duration-300 before:-translate-x-1/2  before:-translate-y-1/2 before:top-1/2 before:left-1/2 before:bg-gray-200 before:dark:bg-gray-900 text-slate-400 group-hover:text-slate-600 group-hover:dark:text-white">
-                        <Icon className="text-base rtl:-scale-x-100" name="forward-ios" />
-                    </span>
+                    <span className="text-sm/6 text-slate-400 block md:w-1/2">First Name</span>
+                    <span className="text-sm/6 text-slate-600 dark:text-white block md:w-1/2">{userDetails?.firstName || 'Not provided'}</span>
                 </div>
             </div>
 
             {/* Last Name */}
-            <div className="modal-toggle group px-5 py-4 md:py-6 flex items-center border-b last:border-b-0 border-gray-200 dark:border-gray-800" onClick={() => setIsOpen(true)}>
-                <div className="md:flex md:items-center flex-grow">
-                    <span className="text-sm/6 text-slate-400 group-hover:text-slate-600 group-hover:dark:text-slate-300 transition-all duration-300 block md:w-1/2">Last Name</span>
-                    <span className="text-sm/6 text-slate-600 group-hover:text-slate-700 dark:text-white group-hover:dark:text-slate-200 transition-all duration-300 block md:w-1/2">{userDetails?.lastName || 'Not provided'}</span>
-                </div>
-                <div className="md:flex md:items-center flex-grow-0 ms-auto md:justify-end md:w-[200px] md:text-end">
-                    <span className="inline-flex items-center justify-center isolate relative h-8 w-8 px-1.5 before:content-[''] before:absolute before:-z-[1] before:h-5 before:w-5 group-hover:before:h-8 group-hover:before:w-8 before:rounded-full before:opacity-0 group-hover:before:opacity-100 before:transition-all before:duration-300 before:-translate-x-1/2  before:-translate-y-1/2 before:top-1/2 before:left-1/2 before:bg-gray-200 before:dark:bg-gray-900 text-slate-400 group-hover:text-slate-600 group-hover:dark:text-white">
-                        <Icon className="text-base rtl:-scale-x-100" name="forward-ios" />
-                    </span>
-                </div>
-            </div>
-
-            {/* Email */}
             <div className="group px-5 py-4 md:py-6 flex items-center border-b last:border-b-0 border-gray-200 dark:border-gray-800">
                 <div className="md:flex md:items-center flex-grow">
-                    <span className="text-sm/6 text-slate-400 group-hover:text-slate-600 group-hover:dark:text-slate-300 transition-all duration-300 block md:w-1/2">Email</span>
-                    <span className="text-sm/6 text-slate-600 dark:text-slate-300 block md:w-1/2">{userDetails?.email || 'Not available'}</span>
+                    <span className="text-sm/6 text-slate-400 block md:w-1/2">Last Name</span>
+                    <span className="text-sm/6 text-slate-600 dark:text-white block md:w-1/2">{userDetails?.lastName || 'Not provided'}</span>
                 </div>
             </div>
+        </div>        {/* Update Button */}
+        <div className="flex justify-end mt-6">
+            <Button variant="primary" onClick={openModal}>Update Profile</Button>
         </div>
         
         {/* Keep the existing modal for editing */}
@@ -172,65 +216,84 @@ const Personal = ({pageAside}) => {
                         <Dialog.Panel className="relative bg-white dark:bg-gray-950 rounded-md w-full md:w-[720px] sm:w-[520px] mx-auto text-start">
                             <button onClick={() => setIsOpen(false)} className="modal-close *:pointer-events-none absolute top-4 end-4 text-slate-500 hover:text-slate-700 dark:text-white">
                                 <Icon className="text-xl" name="cross" />
-                            </button>
-                            <div className="px-5 py-6 sm:p-15">
-                                <Tab.Group>
-                                    <h5 className="text-xl font-bold font-heading text-slate-700 dark:text-white">Update Profile</h5>
-                                    <Tab.List as="ul" className="tab-nav flex flex-wrap font-heading text-sm border-b border-gray-300 dark:border-gray-900">
-                                        <li className="tab-item pe-5 md:pe-6 lg:pe-7 xl:pe-9 last:pe-0">
-                                            <Tab className="tab-toggle inline-flex items-center text-sm font-bold py-4 relative -mb-px text-slate-600 dark:text-slate-400 after:absolute after:h-0.75 after:bg-primary-600 after:inset-x-0 after:bottom-0 after:opacity-0 ui-selected:after:opacity-100 ui-selected:text-primary-600" data-target="#personal-info">Personal</Tab>
-                                        </li>
-                                        <li className="tab-item pe-5 md:pe-6 lg:pe-7 xl:pe-9 last:pe-0">
-                                            <Tab className="tab-toggle inline-flex items-center text-sm font-bold py-4 relative -mb-px text-slate-600 dark:text-slate-400 after:absolute after:h-0.75 after:bg-primary-600 after:inset-x-0 after:bottom-0 after:opacity-0 ui-selected:after:opacity-100 ui-selected:text-primary-600" data-target="#personal-address">Address</Tab>
-                                        </li>
-                                    </Tab.List>
-                                    <Tab.Panels className="tab-content mt-5">
-                                        <Tab.Panel>
-                                            <div className="grid grid-flow-dense grid-cols-12 gap-6">
-                                                <div className="col-span-12 md:col-span-6">
-                                                    <Form.Group>
-                                                        <Form.Label className="mb-2" htmlFor="firstName">First Name</Form.Label>
-                                                        <Input.Wrap>
-                                                            <Input defaultValue={userDetails?.firstName || ''} id="firstName" />
-                                                        </Input.Wrap>
-                                                    </Form.Group>
-                                                </div>
-                                                <div className="col-span-12 md:col-span-6">
-                                                    <Form.Group>
-                                                        <Form.Label className="mb-2" htmlFor="lastName">Last Name</Form.Label>
-                                                        <Input.Wrap>
-                                                            <Input defaultValue={userDetails?.lastName || ''} id="lastName" />
-                                                        </Input.Wrap>
-                                                    </Form.Group>
-                                                </div>
-                                                <div className="col-span-12">
-                                                    <Form.Group>
-                                                        <Form.Label className="mb-2" htmlFor="email">Email Address</Form.Label>
-                                                        <Input.Wrap>
-                                                            <Input defaultValue={userDetails?.email || ''} id="email" />
-                                                        </Input.Wrap>
-                                                    </Form.Group>
-                                                </div>
-                                            </div>
-                                        </Tab.Panel>
-                                        <Tab.Panel>
-                                            <div className="grid grid-flow-dense grid-cols-12 gap-6">
-                                                <div className="col-span-12">
-                                                    <Form.Group>
-                                                        <Form.Label className="mb-2" htmlFor="address">Address</Form.Label>
-                                                        <Input.Wrap>
-                                                            <Input placeholder="Enter your address" id="address" />
-                                                        </Input.Wrap>
-                                                    </Form.Group>
-                                                </div>
-                                            </div>
-                                        </Tab.Panel>
-                                    </Tab.Panels>
-                                    <div className="flex justify-end gap-3 mt-6">
-                                        <Button variant="light" onClick={() => setIsOpen(false)}>Cancel</Button>
-                                        <Button variant="primary">Update Profile</Button>
+                            </button>                            <div className="px-5 py-6 sm:p-15">
+                                <h5 className="text-xl font-bold font-heading text-slate-700 dark:text-white mb-5">Update Profile</h5>
+                                
+                                {/* Success Message */}
+                                {updateSuccess && (
+                                    <Alert variant="success" className="mb-6">
+                                        <Icon name="check-circle" className="me-2" />
+                                        Profile updated successfully!
+                                    </Alert>
+                                )}
+                                
+                                {/* Error Message */}
+                                {updateError && (
+                                    <Alert variant="danger" className="mb-6">
+                                        <Icon name="alert-circle" className="me-2" />
+                                        {updateError}
+                                    </Alert>
+                                )}
+                                
+                                <div className="grid grid-flow-dense grid-cols-12 gap-6">
+                                    <div className="col-span-12 md:col-span-6">
+                                        <Form.Group>
+                                            <Form.Label className="mb-2" htmlFor="firstName">First Name</Form.Label>
+                                            <Input.Wrap>
+                                                <Input 
+                                                    value={formData.firstName} 
+                                                    onChange={(e) => handleInputChange('firstName', e.target.value)}
+                                                    id="firstName" 
+                                                    disabled={updateLoading || updateSuccess}
+                                                />
+                                            </Input.Wrap>
+                                        </Form.Group>
                                     </div>
-                                </Tab.Group>
+                                    <div className="col-span-12 md:col-span-6">
+                                        <Form.Group>
+                                            <Form.Label className="mb-2" htmlFor="lastName">Last Name</Form.Label>
+                                            <Input.Wrap>
+                                                <Input 
+                                                    value={formData.lastName} 
+                                                    onChange={(e) => handleInputChange('lastName', e.target.value)}
+                                                    id="lastName" 
+                                                    disabled={updateLoading || updateSuccess}
+                                                />
+                                            </Input.Wrap>
+                                        </Form.Group>
+                                    </div>
+                                    <div className="col-span-12">
+                                        <Form.Group>
+                                            <Form.Label className="mb-2" htmlFor="address">Address</Form.Label>
+                                            <Input.Wrap>
+                                                <Input 
+                                                    value={formData.address} 
+                                                    onChange={(e) => handleInputChange('address', e.target.value)}
+                                                    placeholder="Enter your address" 
+                                                    id="address" 
+                                                    disabled={updateLoading || updateSuccess}
+                                                />
+                                            </Input.Wrap>
+                                        </Form.Group>
+                                    </div>
+                                </div>
+                                <div className="flex justify-end gap-3 mt-6">
+                                    <Button 
+                                        variant="light" 
+                                        onClick={() => setIsOpen(false)}
+                                        disabled={updateLoading}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button 
+                                        variant="primary" 
+                                        onClick={handleUpdateProfile}
+                                        disabled={updateLoading || updateSuccess}
+                                        loading={updateLoading}
+                                    >
+                                        {updateLoading ? 'Updating...' : 'Update Profile'}
+                                    </Button>
+                                </div>
                             </div>
                         </Dialog.Panel>
                     </Transition.Child>

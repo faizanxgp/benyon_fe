@@ -117,9 +117,20 @@ export const getUserRoleLabel = () => {
   } else if (roles.includes('standard')) {
     return 'standard';
   }
-  
-  // Default fallback
+    // Default fallback
   return 'user';
+};
+
+// Function to get user's email from JWT token
+export const getUserEmail = () => {
+  const token = localStorage.getItem('access_token') || BEARER;
+  if (!token) return '';
+  
+  const decoded = decodeJWT(token);
+  if (!decoded) return '';
+  
+  // Extract email from JWT payload
+  return decoded.email || decoded.preferred_username || '';
 };
 
 // Function to validate JWT token (check if it's not expired)
@@ -318,4 +329,49 @@ export const setupTokenExpiryMonitoring = () => {
   
   // Return cleanup function
   return () => clearInterval(intervalId);
+};
+
+// Function to change user password
+export const changePassword = async (newPassword) => {
+  try {
+    // Here you would typically make an API call to your backend
+    // For demonstration, we'll simulate the API call
+    
+    // Example API call structure:
+    // const response = await api.post('/api/auth/change-password', {
+    //   newPassword: newPassword
+    // });
+    
+    // For now, simulate a successful response
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    return { success: true, message: 'Password updated successfully' };
+      } catch (error) {
+    console.error('Error changing password:', error);
+    throw new Error('Failed to update password. Please try again.');
+  }
+};
+
+// Function to update user profile
+export const updateUserProfile = async (username, profileData) => {
+  try {
+    // Here you would typically make an API call to your backend
+    // For demonstration, we'll simulate the API call
+    
+    // Example API call structure:
+    // const response = await api.put(`/api/users/${username}/profile`, profileData);
+    
+    // For now, simulate a successful response
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    return { 
+      success: true, 
+      message: 'Profile updated successfully',
+      data: profileData
+    };
+    
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    throw new Error('Failed to update profile. Please try again.');
+  }
 };
