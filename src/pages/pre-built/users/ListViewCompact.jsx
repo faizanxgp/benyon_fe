@@ -485,16 +485,6 @@ const UsersListCompactPage = () => {
             <PageHead.Group>
                 <PageHead.Option>
                     <ul className="flex items-center gap-4 px-3.5 py-5 sm:py-0">
-                        <li>
-                            <Button 
-                                size="rg" 
-                                variant="white-outline"
-                                onClick={fetchUsers}
-                            >
-                                <Icon className="text-xl/4.5" name="reload" />
-                                <span className="ms-3">Debug Refresh</span>
-                            </Button>
-                        </li>
                         {/* <li>
                             <Button size="rg" variant="white-outline">
                                 <Icon className="text-xl/4.5" name="download-cloud" />
