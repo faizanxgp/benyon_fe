@@ -1,4 +1,4 @@
-import { getDirContents, isAdmin } from '../../../services/api';
+import { getDirContents, isAdmin, getFilePreview } from '../../../services/api';
 
 import React,{useState, useEffect, Fragment} from 'react'
 import Aside from './Aside';
@@ -13,12 +13,13 @@ import FileDetailsModal from './FileDetailsModal';
 import FileCopyModal from './FileCopyModal';
 import FileMoveModal from './FileMoveModal';
 import FileShareModal from './FileShareMOdal';
+import FilePreviewModal from './FilePreviewModal';
 
 import { Menu } from '@headlessui/react';
 import { usePopper } from 'react-popper';
 import { useTheme } from "../../../layout/context";
 
-const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedItem, setShowShareModal, setShowCopyModal, setShowMoveModal}) => {
+const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedItem, setShowShareModal, setShowCopyModal, setShowMoveModal, currentPath, setShowPreviewModal, setPreviewData, setPreviewFileName}) => {
     const theme = useTheme();
     let [dropdownToggle, setDropdownToggle] = useState()
     let [dropdownContent, setDropdownContent] = useState()
@@ -33,6 +34,27 @@ const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedIt
     const handleShowDetails = () => {
         setSelectedItem(item);
         setShowDetailsModal(true);
+    };
+
+    const handlePreview = async () => {
+        try {
+            // Construct the full file path
+            const filePath = currentPath === "/" ? item.name : `${currentPath.slice(1)}/${item.name}`;
+            console.log('Previewing file at path:', filePath);
+            
+            const response = await getFilePreview(filePath);
+            console.log('Preview response:', response);
+            
+            // Handle the preview response - API returns {detail: "<base64-encoded-image-string>"}
+            if (response.data && response.data.detail) {
+                setPreviewData(response.data.detail);
+                setPreviewFileName(item.name);
+                setShowPreviewModal(true);
+            }
+        } catch (error) {
+            console.error('Error loading preview:', error);
+            alert('Failed to load preview: ' + (error.response?.data?.message || error.message));
+        }
     };
 
   return (
@@ -54,6 +76,17 @@ const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedIt
                                 </button>
                             </Menu.Item>
                         </li>
+                        {/* Only show Preview option for files, not folders */}
+                        {!item.is_dir && (
+                            <li>
+                                <Menu.Item as={Fragment}>
+                                    <button onClick={handlePreview} className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300 outline-none">
+                                        <Icon className="text-lg/none w-8 opacity-80 text-primary-600 text-start" name="monitor" />
+                                        <span>Preview</span>
+                                    </button>
+                                </Menu.Item>
+                            </li>
+                        )}
                         <li>
                             <Menu.Item as={Fragment}>
                                 <button onClick={() => setShowShareModal(true)} className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300 outline-none">
@@ -271,6 +304,9 @@ const FileManagerPage = () => {
     const [showShareModal, setShowShareModal] = useState(false);
     const [showMoveModal, setShowMoveModal] = useState(false);
     const [showCopyModal, setShowCopyModal] = useState(false);
+    const [showPreviewModal, setShowPreviewModal] = useState(false);
+    const [previewData, setPreviewData] = useState(null);
+    const [previewFileName, setPreviewFileName] = useState('');
 
     const [currentPath, setCurrentPath] = useState("/");
     const [files, setFiles] = useState([]);
@@ -586,7 +622,7 @@ const FileManagerPage = () => {
                                                             </ul>
                                                         </a>
                                                         <div className="absolute top-2 end-2 transition-all duration-300 group-hover/fileitem:opacity-100">
-                                                            <ItemActionDropdown setShowDetailsModal={setShowDetailsModal} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} />
+                                                            <ItemActionDropdown item={item} currentPath={currentPath} setShowDetailsModal={setShowDetailsModal} setSelectedItem={setSelectedItem} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} setShowPreviewModal={setShowPreviewModal} setPreviewData={setPreviewData} setPreviewFileName={setPreviewFileName} />
                                                         </div>
                                                     </div>
                                                 )
@@ -621,11 +657,15 @@ const FileManagerPage = () => {
                                                 <div className="absolute top-2 end-2 transition-all duration-300 group-hover/fileitem:opacity-100">
                                                 <ItemActionDropdown
                                                     item={item}
+                                                    currentPath={currentPath}
                                                     setShowDetailsModal={setShowDetailsModal}
                                                     setSelectedItem={setSelectedItem}
                                                     setShowShareModal={setShowShareModal}
                                                     setShowCopyModal={setShowCopyModal}
                                                     setShowMoveModal={setShowMoveModal}
+                                                    setShowPreviewModal={setShowPreviewModal}
+                                                    setPreviewData={setPreviewData}
+                                                    setPreviewFileName={setPreviewFileName}
                                                 />
                                                 </div>
                                             </div>
@@ -659,7 +699,7 @@ const FileManagerPage = () => {
                                                                     </div>
                                                                 </a>
                                                                 <div className="absolute top-2 end-2 transition-all duration-300 group-hover/fileitem:opacity-100">
-                                                                    <ItemActionDropdown item={item} setShowDetailsModal={setShowDetailsModal} setSelectedItem={setSelectedItem} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} />
+                                                                    <ItemActionDropdown item={item} currentPath={currentPath} setShowDetailsModal={setShowDetailsModal} setSelectedItem={setSelectedItem} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} setShowPreviewModal={setShowPreviewModal} setPreviewData={setPreviewData} setPreviewFileName={setPreviewFileName} />
                                                                 </div>
                                                             </div>}
                                                         </React.Fragment>
@@ -689,7 +729,7 @@ const FileManagerPage = () => {
                                                                     </div>
                                                                 </a>
                                                                 <div className="absolute top-2 end-2 transition-all duration-300 group-hover/fileitem:opacity-100">
-                                                                    <ItemActionDropdown item={item} setShowDetailsModal={setShowDetailsModal} setSelectedItem={setSelectedItem} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} />
+                                                                    <ItemActionDropdown item={item} currentPath={currentPath} setShowDetailsModal={setShowDetailsModal} setSelectedItem={setSelectedItem} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} setShowPreviewModal={setShowPreviewModal} setPreviewData={setPreviewData} setPreviewFileName={setPreviewFileName} />
                                                                 </div>
                                                             </div>}
                                                         </React.Fragment>
@@ -732,7 +772,7 @@ const FileManagerPage = () => {
                                                                 </div>
                                                             </div>
                                                             <div className="flex-shrink w-[60px] py-4 first:ps-5 pe-4 text-end">
-                                                                <ItemActionDropdown item={item} setShowDetailsModal={setShowDetailsModal} setSelectedItem={setSelectedItem} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} />
+                                                                <ItemActionDropdown item={item} currentPath={currentPath} setShowDetailsModal={setShowDetailsModal} setSelectedItem={setSelectedItem} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} setShowPreviewModal={setShowPreviewModal} setPreviewData={setPreviewData} setPreviewFileName={setPreviewFileName} />
                                                             </div>
                                                         </div>
                                                     )
@@ -752,6 +792,7 @@ const FileManagerPage = () => {
         <FileCopyModal show={showCopyModal} setShow={setShowCopyModal} />
         <FileMoveModal show={showMoveModal} setShow={setShowMoveModal} />
         <FileShareModal show={showShareModal} setShow={setShowShareModal} />
+        <FilePreviewModal show={showPreviewModal} setShow={setShowPreviewModal} previewData={previewData} fileName={previewFileName} />
 
     </>
   )
