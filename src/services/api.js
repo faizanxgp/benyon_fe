@@ -356,6 +356,14 @@ export const getFilePreview = (filePath) => {
   return api.post("/files/file_preview", formData);
 };
 
+export const downloadFile = (filePath) => {
+  const formData = new FormData();
+  formData.append("path", filePath);
+  return api.post("/files/download_file", formData, {
+    responseType: 'blob' // Important for file downloads
+  });
+};
+
 /**
  * LOGOUT FLOW DOCUMENTATION
  * 
