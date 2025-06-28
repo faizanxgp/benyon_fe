@@ -186,7 +186,7 @@ export const loginToKeycloak = async (username, password) => {
 // Option A: Create an instance with header pre-configured
 export const api = axios.create({
   baseURL: 'http://localhost:5000', // adjust as needed
-  timeout: 10000,
+  timeout: 15000,
   headers: {
     Authorization: `Bearer ${BEARER}`
   }
