@@ -7,7 +7,6 @@ import Header from './Header';
 import { Button, Icon, CheckBox, Avatar, Head } from '../../../componenets';
 import { fileManagerIcons } from '../../../store/icons'
 import { toInitials } from '../../../utilities';
-import { Tab } from '@headlessui/react';
 import UploadModal from './UploadModal';
 import FileDetailsModal from './FileDetailsModal';
 import FileCopyModal from './FileCopyModal';
@@ -115,30 +114,6 @@ const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedIt
                                 </Menu.Item>
                             </li>
                         )}
-                        <li>
-                            <Menu.Item as={Fragment}>
-                                <button onClick={() => setShowShareModal(true)} className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300 outline-none">
-                                    <Icon className="text-lg/none w-8 opacity-80 text-primary-600 text-start" name="share" />
-                                    <span>Share</span>
-                                </button>
-                            </Menu.Item>
-                        </li>
-                        <li>
-                            <Menu.Item as={Fragment}>
-                                <button onClick={() => setShowCopyModal(true)} className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300 outline-none">
-                                    <Icon className="text-lg/none w-8 opacity-80 text-primary-600 text-start" name="copy" />
-                                    <span>Copy</span>
-                                </button>
-                            </Menu.Item>
-                        </li>
-                        <li>
-                            <Menu.Item as={Fragment}>
-                                <button onClick={() => setShowMoveModal(true)} className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300 outline-none">
-                                    <Icon className="text-lg/none w-8 opacity-80 text-primary-600 text-start" name="forward-arrow" />
-                                    <span>Move</span>
-                                </button>
-                            </Menu.Item>
-                        </li>
                         {/* Only show Download option for files, not folders */}
                         {!item.is_dir && (
                             <li>
@@ -150,12 +125,6 @@ const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedIt
                                 </Menu.Item>
                             </li>
                         )}
-                        <li>
-                            <Menu.Item as="button" className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300">
-                                <Icon className="text-lg/none w-8 opacity-80 text-primary-600 text-start" name="pen" />
-                                <span>Rename</span>
-                            </Menu.Item>
-                        </li>
                         <li>
                             <Menu.Item as="button" className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300">
                                 <Icon className="text-lg/none w-8 opacity-80 text-primary-600 text-start" name="trash" />
@@ -196,30 +165,6 @@ const BulkActionDropdown = ({className, setShowShareModal, setShowCopyModal, set
                 <Menu.Items modal={false} ref={setDropdownContent} style={styles.popper} {...attributes.popper} className="border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 rounded-md shadow-lg z-[9999] min-w-[150px] fixed"
                     onClick={(e) => e.stopPropagation()}>
                     <ul className="py-2">
-                        <li>
-                            <Menu.Item as={Fragment}>
-                                <button onClick={() => setShowShareModal(true)} className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300 outline-none">
-                                    <Icon className="text-lg/none w-8 opacity-80 text-primary-600 text-start" name="share" />
-                                    <span>Share</span>
-                                </button>
-                            </Menu.Item>
-                        </li>
-                        <li>
-                            <Menu.Item as={Fragment}>
-                                <button onClick={() => setShowCopyModal(true)} className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300 outline-none">
-                                    <Icon className="text-lg/none w-8 opacity-80 text-primary-600 text-start" name="copy" />
-                                    <span>Copy</span>
-                                </button>
-                            </Menu.Item>
-                        </li>
-                        <li>
-                            <Menu.Item as={Fragment}>
-                                <button onClick={() => setShowMoveModal(true)} className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300 outline-none">
-                                    <Icon className="text-lg/none w-8 opacity-80 text-primary-600 text-start" name="forward-arrow" />
-                                    <span>Move</span>
-                                </button>
-                            </Menu.Item>
-                        </li>
                         <li>
                             <Menu.Item as="button" className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300">
                                 <Icon className="text-lg/none w-8 opacity-80 text-primary-600 text-start" name="download" />
@@ -618,212 +563,50 @@ const FileManagerPage = () => {
                         </div> */}
                         
                         <div className="mb-10 last:mb-0">
-                            <Tab.Group>
-                                <div className="pb-3 relative flex justify-end items-center">
-                                    <Tab.List as="ul" className="tab-nav flex items-center gap-4">
-                                        <li className="tab-item">
-                                            <Tab className="tab-toggle flex items-center justify-center h-6 w-6 text-slate-400 ui-selected:text-primary-600 hover:text-slate-700 dark:text-white transition-all duration-300 outline-none">
-                                                <em className="text-2xl/none ni ni-view-grid3-wd"></em>
-                                            </Tab>
-                                        </li>
-                                        <li className="tab-item">
-                                            <Tab className="tab-toggle flex items-center justify-center h-6 w-6 text-slate-400 ui-selected:text-primary-600 hover:text-slate-700 dark:text-white transition-all duration-300 outline-none">
-                                                <em className="text-2xl/none ni ni-view-group-wd"></em>
-                                            </Tab>
-                                        </li>
-                                        <li className="tab-item">
-                                            <Tab className="tab-toggle flex items-center justify-center h-6 w-6 text-slate-400 ui-selected:text-primary-600 hover:text-slate-700 dark:text-white transition-all duration-300 outline-none">
-                                                <em className="text-2xl/none ni ni-view-row-wd"></em>
-                                            </Tab>
-                                        </li>
-                                    </Tab.List>
+                            <div className="grid grid-flow-dense grid-cols-12 gap-4">
+                                {files.map((item, index) => (
+                                <div
+                                    key={index}
+                                    className="group/fileitem relative border border-gray-300 dark:border-gray-900 bg-white dark:bg-gray-950 rounded col-span-12 xs:col-span-6 sm:col-span-4 xl:col-span-3 2xl:col-span-2"
+                                >
+                                    <a
+                                    href="#"
+                                    onClick={e => {
+                                        e.preventDefault();
+                                        // If it's a folder, navigate into it
+                                        if (item.is_dir) {
+                                        // Avoid double slashes
+                                        setCurrentPath(currentPath === "/" ? `/${item.name}` : `${currentPath}/${item.name}`);
+                                        }
+                                    }}
+                                    className="flex flex-col pt-6 pb-4"
+                                    style={{ cursor: item.is_dir ? "pointer" : "default" }}
+                                    title={item.is_dir ? "Open folder" : item.name}
+                                    >
+                                    <div className="h-18 [&>svg]:h-full [&>svg]:mx-auto">
+                                        {item.is_dir ? fileManagerIcons.folderAlt : fileManagerIcons.fileDocAlt}
+                                    </div>
+                                    <div className="text-sm/snug text-center font-medium pt-4 flex justify-center">
+                                        <span className="line-clamp-1">{item.name}</span>
+                                    </div>
+                                    </a>
+                                    <div className="absolute top-2 end-2 transition-all duration-300 group-hover/fileitem:opacity-100">
+                                    <ItemActionDropdown
+                                        item={item}
+                                        currentPath={currentPath}
+                                        setShowDetailsModal={setShowDetailsModal}
+                                        setSelectedItem={setSelectedItem}
+                                        setShowShareModal={setShowShareModal}
+                                        setShowCopyModal={setShowCopyModal}
+                                        setShowMoveModal={setShowMoveModal}
+                                        setShowPreviewModal={setShowPreviewModal}
+                                        setPreviewData={setPreviewData}
+                                        setPreviewFileName={setPreviewFileName}
+                                    />
+                                    </div>
                                 </div>
-                                <Tab.Panels className="tab-content">
-                                    <Tab.Panel className="tab-panel">
-                                        <div className="flex items-center justify-end gap-3">
-                                            <BulkActionDropdown className="dropdown" setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} />
-                                        </div>
-                                        <div className="grid grid-flow-dense grid-cols-12 gap-4">
-                                            {/* {files.map((item,index)=> {
-                                                return(
-                                                    <div key={index} className="group/fileitem relative border border-gray-300 dark:border-gray-900 bg-white dark:bg-gray-950 rounded col-span-12 xs:col-span-6 sm:col-span-4 xl:col-span-3 2xl:col-span-2">
-                                                        <a href="#link" onClick={(e)=> e.preventDefault()} className="flex flex-col pt-6 pb-4">
-                                                            <div className="h-18 [&>svg]:h-full [&>svg]:mx-auto">
-                                                                {item.icon}
-                                                            </div>
-                                                            <div className="relative text-sm/snug text-center font-medium pt-4 px-5.5 mx-auto inline-flex justify-center">
-                                                                <span className="line-clamp-1">{item.name}</span> {item.ext && '.' + item.ext}
-                                                                <div className={`inline-flex absolute end-0 group/asterisk cursor-pointer opacity-0 group-hover/fileitem:opacity-100 ${item.stared ? 'active' : ''}`}>
-                                                                    <em className="text-lg/none text-primary-600 ni ni-star"></em>
-                                                                    <em className="text-lg/none text-primary-600 absolute top-0 opacity-0 group-hover/asterisk:opacity-100 group-[.active]/asterisk:opacity-100 ni ni-star-fill"></em>
-                                                                </div>
-                                                            </div>
-                                                            <ul className="flex items-center justify-center pt-1 gap-3">
-                                                                <li className="text-xs/5 relative text-slate-400 first:before:hidden before:absolute before:rounded-full before:-start-1.5 before:top-1/2 before:-translate-y-1/2 before:-translate-x-1/2  before:h-1 before:w-1 before:bg-slate-400 before:opacity-80">{item.date}</li>
-                                                                <li className="text-xs/5 relative text-slate-400 first:before:hidden before:absolute before:rounded-full before:-start-1.5 before:top-1/2 before:-translate-y-1/2 before:-translate-x-1/2  before:h-1 before:w-1 before:bg-slate-400 before:opacity-80">{item.size}</li>
-                                                            </ul>
-                                                        </a>
-                                                        <div className="absolute top-2 end-2 transition-all duration-300 group-hover/fileitem:opacity-100">
-                                                            <ItemActionDropdown item={item} currentPath={currentPath} setShowDetailsModal={setShowDetailsModal} setSelectedItem={setSelectedItem} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} setShowPreviewModal={setShowPreviewModal} setPreviewData={setPreviewData} setPreviewFileName={setPreviewFileName} />
-                                                        </div>
-                                                    </div>
-                                                )
-                                            })} */}
-
-                                            {files.map((item, index) => (
-                                            <div
-                                                key={index}
-                                                className="group/fileitem relative border border-gray-300 dark:border-gray-900 bg-white dark:bg-gray-950 rounded col-span-12 xs:col-span-6 sm:col-span-4 xl:col-span-3 2xl:col-span-2"
-                                            >
-                                                <a
-                                                href="#"
-                                                onClick={e => {
-                                                    e.preventDefault();
-                                                    // If it's a folder, navigate into it
-                                                    if (item.is_dir) {
-                                                    // Avoid double slashes
-                                                    setCurrentPath(currentPath === "/" ? `/${item.name}` : `${currentPath}/${item.name}`);
-                                                    }
-                                                }}
-                                                className="flex flex-col pt-6 pb-4"
-                                                style={{ cursor: item.is_dir ? "pointer" : "default" }}
-                                                title={item.is_dir ? "Open folder" : item.name}
-                                                >
-                                                <div className="h-18 [&>svg]:h-full [&>svg]:mx-auto">
-                                                    {item.is_dir ? fileManagerIcons.folderAlt : fileManagerIcons.fileDocAlt}
-                                                </div>
-                                                <div className="text-sm/snug text-center font-medium pt-4 flex justify-center">
-                                                    <span className="line-clamp-1">{item.name}</span>
-                                                </div>
-                                                </a>
-                                                <div className="absolute top-2 end-2 transition-all duration-300 group-hover/fileitem:opacity-100">
-                                                <ItemActionDropdown
-                                                    item={item}
-                                                    currentPath={currentPath}
-                                                    setShowDetailsModal={setShowDetailsModal}
-                                                    setSelectedItem={setSelectedItem}
-                                                    setShowShareModal={setShowShareModal}
-                                                    setShowCopyModal={setShowCopyModal}
-                                                    setShowMoveModal={setShowMoveModal}
-                                                    setShowPreviewModal={setShowPreviewModal}
-                                                    setPreviewData={setPreviewData}
-                                                    setPreviewFileName={setPreviewFileName}
-                                                />
-                                                </div>
-                                            </div>
-                                            ))}
-
-                                        </div>
-                                    </Tab.Panel>
-                                    <Tab.Panel className="tab-panel">
-                                        <div className="flex items-center justify-end gap-3">
-                                            <BulkActionDropdown className="dropdown" setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} />
-                                        </div>
-                                        <div className="mb-10 last:mb-0">
-                                            <h6 className="border-t border-gray-200 dark:border-gray-800 font-heading font-bold text-xs tracking-wider uppercase py-4">Folder</h6>
-                                            <div className="grid grid-flow-dense grid-cols-12 gap-4">
-                                                {files.map((item,index)=> {
-                                                    return(
-                                                        <React.Fragment key={index}>
-                                                            {item.type === "folder" && <div className="group/fileitem relative border border-gray-300 dark:border-gray-900 bg-white dark:bg-gray-950 rounded col-span-12 sm:col-span-6 2xl:col-span-4">
-                                                                <a href="#link" onClick={(e)=> e.preventDefault()} className="flex flex-col p-4">
-                                                                    <div className="flex items-center">
-                                                                        <div className="h-8 [&>svg]:h-full [&>svg]:mx-auto">
-                                                                            {item.icon}
-                                                                        </div>
-                                                                        <div className="relative text-sm/snug font-medium ps-3 pe-5.5 inline-flex">
-                                                                            <span className="line-clamp-1">{item.name}</span>
-                                                                            <div className={`inline-flex absolute end-0 group/asterisk cursor-pointer opacity-0 group-hover/fileitem:opacity-100 ${item.stared ? 'active' : ''}`}>
-                                                                                <em className="text-lg/none text-primary-600 ni ni-star"></em>
-                                                                                <em className="text-lg/none text-primary-600 absolute top-0 opacity-0 group-hover/asterisk:opacity-100 group-[.active]/asterisk:opacity-100 ni ni-star-fill"></em>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </a>
-                                                                <div className="absolute top-2 end-2 transition-all duration-300 group-hover/fileitem:opacity-100">
-                                                                    <ItemActionDropdown item={item} currentPath={currentPath} setShowDetailsModal={setShowDetailsModal} setSelectedItem={setSelectedItem} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} setShowPreviewModal={setShowPreviewModal} setPreviewData={setPreviewData} setPreviewFileName={setPreviewFileName} />
-                                                                </div>
-                                                            </div>}
-                                                        </React.Fragment>
-                                                    )
-                                                })}
-                                            </div>
-                                        </div>
-                                        <div className="mb-10 last:mb-0">
-                                            <h6 className="border-t border-gray-200 dark:border-gray-800 font-heading font-bold text-xs tracking-wider uppercase py-4">Files</h6>
-                                            <div className="grid grid-flow-dense grid-cols-12 gap-4">
-                                                {files.map((item,index)=> {
-                                                    return(
-                                                        <React.Fragment key={index}>
-                                                            {item.type === "file" && <div className="group/fileitem relative border border-gray-300 dark:border-gray-900 bg-white dark:bg-gray-950 rounded col-span-12 sm:col-span-6 2xl:col-span-4">
-                                                                <a href="#link" onClick={(e)=> e.preventDefault()} className="flex flex-col p-4">
-                                                                    <div className="flex items-center">
-                                                                        <div className="h-8 [&>svg]:h-full [&>svg]:mx-auto">
-                                                                            {item.icon}
-                                                                        </div>
-                                                                        <div className="relative text-sm/snug font-medium ps-3 pe-5.5 inline-flex">
-                                                                            <span className="line-clamp-1">{item.name}</span> {item.ext && '.' + item.ext}
-                                                                            <div className={`inline-flex absolute end-0 group/asterisk cursor-pointer opacity-0 group-hover/fileitem:opacity-100 ${item.stared ? 'active' : ''}`}>
-                                                                                <em className="text-lg/none text-primary-600 ni ni-star"></em>
-                                                                                <em className="text-lg/none text-primary-600 absolute top-0 opacity-0 group-hover/asterisk:opacity-100 group-[.active]/asterisk:opacity-100 ni ni-star-fill"></em>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </a>
-                                                                <div className="absolute top-2 end-2 transition-all duration-300 group-hover/fileitem:opacity-100">
-                                                                    <ItemActionDropdown item={item} currentPath={currentPath} setShowDetailsModal={setShowDetailsModal} setSelectedItem={setSelectedItem} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} setShowPreviewModal={setShowPreviewModal} setPreviewData={setPreviewData} setPreviewFileName={setPreviewFileName} />
-                                                                </div>
-                                                            </div>}
-                                                        </React.Fragment>
-                                                    )
-                                                })}
-                                            </div>
-                                        </div>
-                                    </Tab.Panel>
-                                    <Tab.Panel className="tab-panel">
-                                        <div className="w-full">
-                                            <div className="flex items-center">
-                                                <div className="flex-grow ">
-                                                    <OrderedDropdown />
-                                                </div>
-                                                <div className="flex-shrink w-[60px] pe-4 text-end">
-                                                    <BulkActionDropdown className="dropdown me-px" setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} />
-                                                </div>
-                                            </div>
-                                            <div className="border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 rounded">
-                                                {files.map((item,index)=> {
-                                                    return(
-                                                        <div key={index} className="group/filelist flex items-center w-full border-b last:border-b-0 border-gray-200 dark:border-gray-800">
-                                                            <div className="flex-grow py-4 first:ps-5">
-                                                                <div className="flex items-center">
-                                                                    <div className="me-3">
-                                                                        <div className="flex">
-                                                                            <CheckBox size="sm" id="mid-01" />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="h-8 [&>svg]:h-full [&>svg]:mx-auto">
-                                                                        {item.icon}
-                                                                    </div>
-                                                                    <div className="relative text-sm/snug font-medium ps-3 pe-5.5 inline-flex">
-                                                                        <span className="line-clamp-1">{item.name}{item.ext && '.'+item.ext}</span>
-                                                                        <div className={`inline-flex absolute end-0 group/asterisk cursor-pointer opacity-0 group-hover/filelist:opacity-100 ${item.stared ? 'active' : ''}`}>
-                                                                            <em className="text-lg/none text-primary-600 ni ni-star"></em>
-                                                                            <em className="text-lg/none text-primary-600 absolute top-0 opacity-0 group-hover/asterisk:opacity-100 group-[.active]/asterisk:opacity-100 ni ni-star-fill"></em>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="flex-shrink w-[60px] py-4 first:ps-5 pe-4 text-end">
-                                                                <ItemActionDropdown item={item} currentPath={currentPath} setShowDetailsModal={setShowDetailsModal} setSelectedItem={setSelectedItem} setShowShareModal={setShowShareModal} setShowCopyModal={setShowCopyModal} setShowMoveModal={setShowMoveModal} setShowPreviewModal={setShowPreviewModal} setPreviewData={setPreviewData} setPreviewFileName={setPreviewFileName} />
-                                                            </div>
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>
-                                        </div>
-                                    </Tab.Panel>
-                                </Tab.Panels>
-                            </Tab.Group>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
