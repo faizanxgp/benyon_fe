@@ -93,25 +93,12 @@ const FileDetailsModal = ({show, setShow, selectedItem}) => {
                                     <div className="text-sm/5 text-slate-600 dark:text-slate-400">{item.is_dir ? 'Folder' : 'File'}</div>
                                 </div>
                                 <div className="py-2 flex flex-wrap xs:flex-nowrap xs:py-1.5">
-                                    <div className="text-sm/5 w-full xs:w-[100px] xs:flex-shrink-0 text-slate-400">Size</div>
+                                    <div className="text-sm/5 w-full xs:w-[100px] xs:flex-shrink-0 text-slate-400">{item.is_dir ? 'Contents' : 'Size'}</div>
                                     <div className="text-sm/5 text-slate-600 dark:text-slate-400">
                                         {item.is_dir 
                                             ? `${item.num_files || 0} files, ${item.num_subdirs || 0} folders`
                                             : `${formatFileSize(item.size_bytes || item.size || 0)}`}
                                     </div>
-                                </div>
-                                <div className="py-2 flex flex-wrap xs:flex-nowrap xs:py-1.5">
-                                    <div className="text-sm/5 w-full xs:w-[100px] xs:flex-shrink-0 text-slate-400">Location</div>
-                                    <div className="text-sm/5 text-slate-600 dark:text-slate-400">
-                                        <Breadcrumb>
-                                            <Breadcrumb.Item separator="arrow"><Breadcrumb.Link to="/">Home</Breadcrumb.Link></Breadcrumb.Item>
-                                            <Breadcrumb.Item separator="arrow">{item.path || 'Current Folder'}</Breadcrumb.Item>
-                                        </Breadcrumb>
-                                    </div>
-                                </div>
-                                <div className="py-2 flex flex-wrap xs:flex-nowrap xs:py-1.5">
-                                    <div className="text-sm/5 w-full xs:w-[100px] xs:flex-shrink-0 text-slate-400">Owner</div>
-                                    <div className="text-sm/5 text-slate-600 dark:text-slate-400">{item.owner || 'Me'}</div>
                                 </div>
                                 {item.users && item.users.length > 0 && (
                                     <div className="py-2 flex flex-wrap xs:flex-nowrap xs:py-1.5">
@@ -137,8 +124,7 @@ const FileDetailsModal = ({show, setShow, selectedItem}) => {
                             </div>
                         </div>
                         <div className="px-5 sm:px-6 py-4 bg-gray-200 dark:bg-gray-900 rounded-b-[inherit]">
-                            <div className="flex items-center justify-between flex-wrap gap-3">
-                                <button className="text-sm font-medium text-primary-600 hover:text-primary-700 transition-all duration-300">View All Activity</button>
+                            <div className="flex items-center justify-end flex-wrap gap-3">
                                 <ul className="flex items-center gap-5">
                                     <li><Button size="rg" variant="light" className="bg-white">Share</Button></li>
                                     <li><Button onClick={() => setShow(false)} size="rg" variant="primary">Download</Button></li>
