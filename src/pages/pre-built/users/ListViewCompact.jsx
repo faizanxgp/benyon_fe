@@ -383,21 +383,55 @@ const UsersListCompactPage = () => {
         enabled: true,
     });    const fetchUsers = () => {
         setLoading(true);
+        setError(null); // Clear previous errors
+        
         getUsersStatus()
             .then(res => {
+                console.log('API Response:', res); // Debug log
+                console.log('API Response data:', res.data); // Debug log
+                
+                if (!res.data || !res.data.detail) {
+                    throw new Error('Invalid API response structure');
+                }
+                
                 const detail = res.data.detail;
-                const data = Object.entries(detail).map(([username, arr], idx) => ({
-                    id: idx,
-                    username: username,
-                    name: arr[0],
-                    email: arr[1],
-                    role: arr[2],
-                    status: arr[3].charAt(0).toUpperCase() + arr[3].slice(1),
-                }));
+                console.log('Detail object:', detail); // Debug log
+                
+                const data = Object.entries(detail).map(([username, userObj], idx) => {
+                    console.log(`Processing user ${username}:`, userObj); // Debug log
+                    
+                    // Check if userObj is an object with the expected properties
+                    if (!userObj || typeof userObj !== 'object') {
+                        console.warn(`Invalid data for user ${username}:`, userObj);
+                        return null;
+                    }
+                    
+                    // Handle the new API response format with object properties
+                    const { full_name, email, role, session_status, enabled } = userObj;
+                    
+                    if (!full_name || !email || !role || session_status === undefined || enabled === undefined) {
+                        console.warn(`Missing required fields for user ${username}:`, userObj);
+                        return null;
+                    }
+                    
+                    return {
+                        id: idx,
+                        username: username,
+                        name: full_name,
+                        email: email,
+                        role: role,
+                        status: session_status.charAt(0).toUpperCase() + session_status.slice(1), // "inactive" => "Inactive"
+                        enabled: enabled
+                    };
+                }).filter(user => user !== null); // Remove any null entries
+                
+                console.log('Processed user data:', data); // Debug log
                 setUsers(data);
             })
             .catch(err => {
-                setError('Failed to load users');
+                console.error('Error fetching users:', err); // Debug log
+                console.error('Error details:', err.response); // Debug log
+                setError('Failed to load users: ' + (err.message || 'Unknown error'));
             })
             .finally(() => {
                 setLoading(false);
@@ -451,6 +485,16 @@ const UsersListCompactPage = () => {
             <PageHead.Group>
                 <PageHead.Option>
                     <ul className="flex items-center gap-4 px-3.5 py-5 sm:py-0">
+                        <li>
+                            <Button 
+                                size="rg" 
+                                variant="white-outline"
+                                onClick={fetchUsers}
+                            >
+                                <Icon className="text-xl/4.5" name="reload" />
+                                <span className="ms-3">Debug Refresh</span>
+                            </Button>
+                        </li>
                         {/* <li>
                             <Button size="rg" variant="white-outline">
                                 <Icon className="text-xl/4.5" name="download-cloud" />
@@ -553,7 +597,38 @@ const UsersListCompactPage = () => {
                     </div>
                 </div>
             </div>
-            {error && <div className="p-4 text-center text-red-500">{error}</div>}            <table className="border-collapse w-full border-gray-300 dark:border-gray-900"> 
+            {error && (
+                <div className="p-4 text-center">
+                    <div className="text-red-500 mb-2">{error}</div>
+                    <button 
+                        onClick={fetchUsers}
+                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                        Retry
+                    </button>
+                </div>
+            )}
+            
+            {!loading && !error && users.length === 0 && (
+                <div className="p-4 text-center text-gray-500">
+                    No users found. 
+                    <button 
+                        onClick={fetchUsers}
+                        className="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                        Refresh
+                    </button>
+                </div>
+            )}
+            
+            {!loading && !error && users.length > 0 && (
+                <div className="p-4 text-sm text-gray-600">
+                    Showing {users.length} users
+                </div>
+            )}
+            
+            {!loading && !error && users.length > 0 && (
+                <table className="border-collapse w-full border-gray-300 dark:border-gray-900"> 
                 <thead>
                     <tr>
                         <th className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-t border-gray-300 dark:border-gray-900 text-start w-10 sm:w-11">
@@ -598,7 +673,8 @@ const UsersListCompactPage = () => {
                 <tbody>
                 {/* {userData.map((item, index) => { */}
                 {users.map((item, index) => {
-                    return(                        <tr key={index} className="transition-all duration-300 hover:bg-gray-50 hover:dark:bg-gray-1000 group">
+                    return(
+                        <tr key={index} className="transition-all duration-300 hover:bg-gray-50 hover:dark:bg-gray-1000 group">
                             <td className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-gray-300 dark:border-gray-900 w-10 sm:w-11">
                                 <div className="flex items-center">
                                     <CheckBox size="sm" id={item.id} />
@@ -637,10 +713,11 @@ const UsersListCompactPage = () => {
                             {/* <td className="py-2 px-2 first:ps-6 last:pe-6 border-b border-gray-300 dark:border-gray-900 hidden 2xl:table-cell">
                                 <span className="text-sm text-slate-400">{item.lastLogin}</span>
                             </td> */}                            <td className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-gray-300 dark:border-gray-900">
-                                {item.status === "Active" && <span className="text-sm font-medium text-green-600">Active</span>}
-                                {item.status === "Inactive" && <span className="text-sm font-medium text-cyan-600">Inactive</span>}
-                                {item.status === "Pending" && <span className="text-sm font-medium text-yellow-600">Pending</span>}
-                                {item.status === "Suspend" && <span className="text-sm font-medium text-red-600">Suspend</span>}
+                                {item.enabled === false && <span className="text-sm font-medium text-gray-500">Suspended</span>}
+                                {item.enabled !== false && item.status === "Active" && <span className="text-sm font-medium text-green-600">Active</span>}
+                                {item.enabled !== false && item.status === "Inactive" && <span className="text-sm font-medium text-cyan-600">Inactive</span>}
+                                {item.enabled !== false && item.status === "Pending" && <span className="text-sm font-medium text-yellow-600">Pending</span>}
+                                {item.enabled !== false && item.status === "Suspend" && <span className="text-sm font-medium text-red-600">Suspended</span>}
                             </td>
                             <td className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-gray-300 dark:border-gray-900 text-end min-w-[140px]">
                                 <ul className="relative flex items-center justify-end -me-2">
@@ -706,6 +783,8 @@ const UsersListCompactPage = () => {
                 })}
                 </tbody>
             </table>
+            )}
+            
             {/* <div className="p-5">
                 <div className="flex flex-wrap justify-center sm:justify-between gap-4">
                     <Pagination>
