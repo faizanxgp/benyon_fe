@@ -25,9 +25,11 @@ const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedIt
     let [dropdownContent, setDropdownContent] = useState()
     let { styles, attributes } = usePopper(dropdownToggle, dropdownContent, {
         placement : theme.direction === "rtl" ? "bottom-start" : "bottom-end",
+        strategy: 'fixed', // Use fixed positioning to escape container constraints
         modifiers: [
             {name: 'offset', options: { offset: theme.direction === "rtl" ? [14, -8] : [-14, -8]}},
-            {name: 'preventOverflow', options: { padding: 8 }},
+            {name: 'preventOverflow', options: { padding: 8, boundary: 'viewport' }},
+            {name: 'flip', options: { fallbackPlacements: ['top-end', 'top-start', 'bottom-start', 'bottom-end'] }},
         ],
     })
 
@@ -91,7 +93,8 @@ const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedIt
                         <Icon className="text-base/4.5" name="more-h" />
                     </Button.Zoom>
                 </Menu.Button>
-                <Menu.Items modal={false} ref={setDropdownContent} style={styles.popper} {...attributes.popper} className="absolute border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 rounded-md shadow z-[1000] min-w-[150px]">
+                <Menu.Items modal={false} ref={setDropdownContent} style={styles.popper} {...attributes.popper} className="border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 rounded-md shadow-lg z-[9999] min-w-[150px] fixed"
+                    onClick={(e) => e.stopPropagation()}>
                     <ul className="py-2">
                         <li>
                             <Menu.Item as={Fragment}>
@@ -173,9 +176,11 @@ const BulkActionDropdown = ({className, setShowShareModal, setShowCopyModal, set
     let [dropdownContent, setDropdownContent] = useState()
     let { styles, attributes } = usePopper(dropdownToggle, dropdownContent, {
         placement : theme.direction === "rtl" ? "bottom-start" : "bottom-end",
+        strategy: 'fixed', // Use fixed positioning to escape container constraints
         modifiers: [
             {name: 'offset', options: { offset: theme.direction === "rtl" ? [14, -8] : [-14, -8]}},
-            {name: 'preventOverflow', options: { padding: 8 }},
+            {name: 'preventOverflow', options: { padding: 8, boundary: 'viewport' }},
+            {name: 'flip', options: { fallbackPlacements: ['top-end', 'top-start', 'bottom-start', 'bottom-end'] }},
         ],
     })
 
@@ -188,7 +193,8 @@ const BulkActionDropdown = ({className, setShowShareModal, setShowCopyModal, set
                         <Icon className="text-base/4.5" name="more-h" />
                     </Button.Zoom>
                 </Menu.Button>
-                <Menu.Items modal={false} ref={setDropdownContent} style={styles.popper} {...attributes.popper} className="absolute border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 rounded-md shadow z-[1000] min-w-[150px]">
+                <Menu.Items modal={false} ref={setDropdownContent} style={styles.popper} {...attributes.popper} className="border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 rounded-md shadow-lg z-[9999] min-w-[150px] fixed"
+                    onClick={(e) => e.stopPropagation()}>
                     <ul className="py-2">
                         <li>
                             <Menu.Item as={Fragment}>
@@ -234,9 +240,11 @@ const AddDropdown = ({className, setShowUploadModal}) => {
     let [dropdownContent, setDropdownContent] = useState()
     let { styles, attributes } = usePopper(dropdownToggle, dropdownContent, {
         placement : theme.direction === "rtl" ? "bottom-start" : "bottom-end",
+        strategy: 'fixed', // Use fixed positioning to escape container constraints
         modifiers: [
             {name: 'offset', options: { offset: theme.direction === "rtl" ? [14, -8] : [-14, -8]}},
-            {name: 'preventOverflow', options: { padding: 8 }},
+            {name: 'preventOverflow', options: { padding: 8, boundary: 'viewport' }},
+            {name: 'flip', options: { fallbackPlacements: ['top-end', 'top-start', 'bottom-start', 'bottom-end'] }},
         ],
     })
 
@@ -249,7 +257,8 @@ const AddDropdown = ({className, setShowUploadModal}) => {
                         <Icon className="text-xl/none text-slate-400 dark:text-slate-300" name="plus" />
                     </Button.Zoom>
                 </Menu.Button>
-                <Menu.Items modal={false} ref={setDropdownContent} style={styles.popper} {...attributes.popper} className="absolute border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 rounded-md shadow z-[1000] min-w-[180px]">
+                <Menu.Items modal={false} ref={setDropdownContent} style={styles.popper} {...attributes.popper} className="border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 rounded-md shadow-lg z-[9999] min-w-[180px] fixed"
+                    onClick={(e) => e.stopPropagation()}>
                     <ul className="py-2">
                         <li>
                             <Menu.Item as={Fragment}>
@@ -284,9 +293,11 @@ const OrderedDropdown = ({className, icon, textClassName}) => {
     let [dropdownContent, setDropdownContent] = useState()
     let { styles, attributes } = usePopper(dropdownToggle, dropdownContent, {
         placement : theme.direction === "rtl" ? "bottom-end" : "bottom-start",
+        strategy: 'fixed', // Use fixed positioning to escape container constraints
         modifiers: [
             {name: 'offset', options: { offset: [0, 4]}},
-            {name: 'preventOverflow', options: { padding: 8 }},
+            {name: 'preventOverflow', options: { padding: 8, boundary: 'viewport' }},
+            {name: 'flip', options: { fallbackPlacements: ['top-end', 'top-start', 'bottom-start', 'bottom-end'] }},
         ],
     })
 
@@ -300,7 +311,8 @@ const OrderedDropdown = ({className, icon, textClassName}) => {
                         <em className="text-base/4.5 ni ni-caret-down-fill"></em>
                     </button>
                 </Menu.Button>
-                <Menu.Items modal={false} ref={setDropdownContent} style={styles.popper} {...attributes.popper} className="absolute border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 rounded-md shadow z-[1000] min-w-[150px]">
+                <Menu.Items modal={false} ref={setDropdownContent} style={styles.popper} {...attributes.popper} className="border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 rounded-md shadow-lg z-[9999] min-w-[150px] fixed"
+                    onClick={(e) => e.stopPropagation()}>
                     <ul className="py-2">
                         <li className="group">
                             <h6 className="relative px-5 py-1.5 flex items-center text-xs leading-5 tracking-[1px] font-bold uppercase text-slate-700 dark:text-white">Ordered By</h6>
