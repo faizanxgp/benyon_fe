@@ -9,6 +9,7 @@ import UsersCountryCard from "./UsersCountryCard";
 import BrowserUsedCard from "./BrowserUsedCard";
 import PagesViewCard from "./PagesViewCard";
 import SessionsCard from "./SessionsCard";
+import LoginAnalyticsCard from "./LoginAnalyticsCard";
 
 import { Menu } from '@headlessui/react';
 import { usePopper } from 'react-popper';
@@ -77,6 +78,9 @@ const AnalyticsHomepage = () => {
         </div>
         <div className="col-span-12 md:col-span-6 lg:col-span-4 2xl:col-span-3">
           <WebsitePerformanceCard />
+        </div>
+        <div className="col-span-12 md:col-span-6 lg:col-span-4 2xl:col-span-3">
+          <LoginAnalyticsCard />
         </div>
         <div className="col-span-12 lg:col-span-8 2xl:col-span-6">
           <TrafficChannelListCard />
