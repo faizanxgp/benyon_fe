@@ -199,10 +199,7 @@ const LoginV2Page = () => {
                                 {isLoading ? 'Signing In...' : 'Sign In'}
                             </Button>
                         </Form.Group>
-                    </form>                    <div className="pt-6"> 
-                        New on our platform? 
-                        <Link className="text-primary-500 hover:text-primary-600 transition-all duration-300" to="/auths/auth-register-v2"> Create an account</Link>
-                    </div>
+                    </form>
                     </div>
                 </div>
                 <div className="border-t border-gray-200 dark:border-gray-800 py-6 px-5.5">
