@@ -1,4 +1,4 @@
-import { getDirContents, isAdmin, getFilePreview, downloadFile } from '../../../services/api';
+import { getDirContents, isAdmin, getFilePreview, downloadFile, retrieveUserDetails, getUsername } from '../../../services/api';
 
 import React,{useState, useEffect, Fragment} from 'react'
 import Aside from './Aside';
@@ -18,7 +18,7 @@ import { Menu } from '@headlessui/react';
 import { usePopper } from 'react-popper';
 import { useTheme } from "../../../layout/context";
 
-const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedItem, setShowShareModal, setShowCopyModal, setShowMoveModal, currentPath, setShowPreviewModal, setPreviewData, setPreviewFileName}) => {
+const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedItem, setShowShareModal, setShowCopyModal, setShowMoveModal, currentPath, setShowPreviewModal, setPreviewData, setPreviewFileName, onFileDownloaded}) => {
     const theme = useTheme();
     let [dropdownToggle, setDropdownToggle] = useState()
     let [dropdownContent, setDropdownContent] = useState()
@@ -77,6 +77,11 @@ const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedIt
             link.click();
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
+            
+            // Refresh recent files list after successful download
+            if (onFileDownloaded) {
+                onFileDownloaded();
+            }
         } catch (error) {
             console.error('Error downloading file:', error);
             alert('Failed to download file: ' + (error.response?.data?.message || error.message));
@@ -299,6 +304,8 @@ const FileManagerPage = () => {
     const [files, setFiles] = useState([]);
     const [loading, setLoading] = useState(false);
     const [userIsAdmin, setUserIsAdmin] = useState(false);
+    const [recentFiles, setRecentFiles] = useState([]);
+    const [loadingRecent, setLoadingRecent] = useState(false);
 
     // const files = [
     //     {
@@ -455,6 +462,59 @@ const FileManagerPage = () => {
         setUserIsAdmin(isAdmin());
     }, []);
 
+    // Fetch recent files from user details
+    const fetchRecentFiles = async () => {
+        try {
+            setLoadingRecent(true);
+            // Get user's preferred_username from JWT token - this is used as username for the API
+            const username = getUsername();
+            
+            if (!username) {
+                console.warn('No username found in JWT token');
+                setRecentFiles([]);
+                return;
+            }
+            
+            console.log('Fetching recent files for user:', username);
+            const response = await retrieveUserDetails(username);
+            
+            console.log('API Response:', response.data); // Debug log
+            
+            if (response.data && response.data.detail && response.data.detail.attributes && response.data.detail.attributes.recent_files) {
+                const recentFilesData = response.data.detail.attributes.recent_files
+                    .map(fileString => {
+                        try {
+                            const [timestamp, filename] = fileString.split('|');
+                            return {
+                                timestamp,
+                                filename,
+                                displayTime: new Date(timestamp).toLocaleString()
+                            };
+                        } catch (error) {
+                            console.warn('Error parsing recent file entry:', fileString);
+                            return null;
+                        }
+                    })
+                    .filter(Boolean) // Remove null entries
+                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); // Sort by newest first
+                
+                setRecentFiles(recentFilesData);
+            } else {
+                setRecentFiles([]);
+            }
+        } catch (error) {
+            console.error('Error fetching recent files:', error);
+            setRecentFiles([]);
+        } finally {
+            setLoadingRecent(false);
+        }
+    };
+
+    // Fetch recent files on component mount
+    useEffect(() => {
+        fetchRecentFiles();
+    }, []);
+
   return (
     <>
         <Head title="File Manager" />
@@ -467,19 +527,7 @@ const FileManagerPage = () => {
                         <div className="pb-4">
                             <div className="relative flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                    {currentPath !== "/" && (
-                                        <Button.Zoom 
-                                            size="rg" 
-                                            onClick={() => {
-                                                const parentPath = currentPath.split("/").slice(0, -1).join("/") || "/";
-                                                setCurrentPath(parentPath);
-                                            }}
-                                            title="Go back to parent directory"
-                                        >
-                                            <Icon className="text-xl/none text-slate-400 dark:text-slate-300 rtl:scale-x-100" name="arrow-left" />
-                                        </Button.Zoom>
-                                    )}
-                                    <h3 className="font-heading font-bold text-2xl/tighter tracking-tight text-slate-700 dark:text-white">Files</h3>
+                                    <h3 className="font-heading font-bold text-2xl/tighter tracking-tight text-slate-700 dark:text-white">Document Management</h3>
                                 </div>
                                 <ul className="flex items-center gap-1.5 lg:hidden -me-1.5">
                                     <li>
@@ -515,6 +563,88 @@ const FileManagerPage = () => {
                                         </button>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        
+                        {/* Recent Files Section */}
+                        <div className="mb-6">
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-2">
+                                    <Icon className="text-base text-primary-600" name="clock" />
+                                    <h4 className="font-medium text-lg text-slate-700 dark:text-white">Recent Downloads</h4>
+                                </div>
+                                <Button.Zoom 
+                                    size="sm" 
+                                    onClick={fetchRecentFiles}
+                                    disabled={loadingRecent}
+                                    title="Refresh recent files"
+                                >
+                                    <Icon className={`text-base text-slate-400 dark:text-slate-300 ${loadingRecent ? 'animate-spin' : ''}`} name="refresh" />
+                                </Button.Zoom>
+                            </div>
+                            <div className="bg-slate-50 dark:bg-gray-900 rounded-lg p-4">
+                                {loadingRecent ? (
+                                    <div className="flex items-center justify-center py-4">
+                                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+                                        <span className="ml-2 text-sm text-slate-600 dark:text-slate-400">Loading recent files...</span>
+                                    </div>
+                                ) : recentFiles.length > 0 ? (
+                                    <>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                                            {recentFiles.slice(0, 8).map((recentFile, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="flex items-center gap-3 p-3 bg-white dark:bg-gray-950 rounded-md border border-gray-200 dark:border-gray-800 hover:shadow-sm transition-shadow duration-200"
+                                                >
+                                                    <div className="flex-shrink-0">
+                                                        <Icon className="text-lg text-primary-600" name="file-text" />
+                                                    </div>
+                                                    <div className="flex-grow min-w-0">
+                                                        <p className="text-sm font-medium text-slate-700 dark:text-white truncate">
+                                                            {recentFile.filename}
+                                                        </p>
+                                                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                                                            {recentFile.displayTime}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        {recentFiles.length > 8 && (
+                                            <div className="mt-3 text-center">
+                                                <button className="text-sm text-primary-600 hover:text-primary-700 font-medium">
+                                                    View all recent files
+                                                </button>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <div className="text-center py-6">
+                                        <Icon className="text-3xl text-slate-300 dark:text-slate-600 mx-auto mb-2" name="file-text" />
+                                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                                            No recent downloads yet. Download a file to see it here.
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Files Section Header */}
+                        <div className="pb-4">
+                            <div className="flex items-center gap-3 mb-4">
+                                {currentPath !== "/" && (
+                                    <Button.Zoom 
+                                        size="rg" 
+                                        onClick={() => {
+                                            const parentPath = currentPath.split("/").slice(0, -1).join("/") || "/";
+                                            setCurrentPath(parentPath);
+                                        }}
+                                        title="Go back to parent directory"
+                                    >
+                                        <Icon className="text-xl/none text-slate-400 dark:text-slate-300 rtl:scale-x-100" name="arrow-left" />
+                                    </Button.Zoom>
+                                )}
+                                <h3 className="font-heading font-bold text-2xl/tighter tracking-tight text-slate-700 dark:text-white">Files</h3>
                             </div>
                         </div>
                         
@@ -602,6 +732,7 @@ const FileManagerPage = () => {
                                         setShowPreviewModal={setShowPreviewModal}
                                         setPreviewData={setPreviewData}
                                         setPreviewFileName={setPreviewFileName}
+                                        onFileDownloaded={fetchRecentFiles}
                                     />
                                     </div>
                                 </div>
