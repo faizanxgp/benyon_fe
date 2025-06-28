@@ -1,4 +1,4 @@
-import { getDirContents, isAdmin, getFilePreview } from '../../../services/api';
+import { getDirContents, isAdmin, getFilePreview, downloadFile } from '../../../services/api';
 
 import React,{useState, useEffect, Fragment} from 'react'
 import Aside from './Aside';
@@ -57,6 +57,31 @@ const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedIt
         }
     };
 
+    const handleDownload = async () => {
+        try {
+            // Construct the full file path
+            const filePath = currentPath === "/" ? item.name : `${currentPath.slice(1)}/${item.name}`;
+            console.log('Downloading file at path:', filePath);
+            
+            const response = await downloadFile(filePath);
+            console.log('Download response:', response);
+            
+            // Create a blob URL and trigger download
+            const blob = new Blob([response.data]);
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = item.name; // Use the original filename
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading file:', error);
+            alert('Failed to download file: ' + (error.response?.data?.message || error.message));
+        }
+    };
+
   return (
     <Menu as="div" className={`inline-flex relative ${className ? className : ''}`}>
         {({ open }) => (
@@ -111,12 +136,17 @@ const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedIt
                                 </button>
                             </Menu.Item>
                         </li>
-                        <li>
-                            <Menu.Item as="button" className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300">
-                                <Icon className="text-lg/none w-8 opacity-80 text-primary-600 text-start" name="download" />
-                                <span>Download</span>
-                            </Menu.Item>
-                        </li>
+                        {/* Only show Download option for files, not folders */}
+                        {!item.is_dir && (
+                            <li>
+                                <Menu.Item as={Fragment}>
+                                    <button onClick={handleDownload} className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300 outline-none">
+                                        <Icon className="text-lg/none w-8 opacity-80 text-primary-600 text-start" name="download" />
+                                        <span>Download</span>
+                                    </button>
+                                </Menu.Item>
+                            </li>
+                        )}
                         <li>
                             <Menu.Item as="button" className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300">
                                 <Icon className="text-lg/none w-8 opacity-80 text-primary-600 text-start" name="pen" />
