@@ -258,6 +258,9 @@ export const changeUserPassword = (data) => api.post('/keycloak/change_password'
 // Placeholder for password verification API - to be implemented by backend
 export const verifyPassword = (data) => api.post('/keycloak/verify_password', data);
 
+// Get login events for analytics
+export const getLoginEvents = () => api.post('/keycloak/login_events', {});
+
 // Files
 export const getDirContents = (path = "/") => {
   const formData = new FormData();
