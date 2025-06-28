@@ -1,4 +1,4 @@
-import { createUser, deleteUser, getUsersStatus, getUsername, replaceUserRole } from '../../../services/api';
+import { createUser, deleteUser, getUsersStatus, getUsername, replaceUserRole, toggleUserStatus } from '../../../services/api';
 // import { getUsersStatus } from '../../../services/api';
 import React, { useEffect, useState, Fragment } from 'react';
 
@@ -722,8 +722,28 @@ const UsersListCompactPage = () => {
                             <td className="py-1.5 px-2 first:ps-4 last:pe-4 border-b border-gray-300 dark:border-gray-900 text-end min-w-[140px]">
                                 <ul className="relative flex items-center justify-end -me-2">
                                     <li className="bg-gray-50 dark:bg-gray-1000 px-0.5">
-                                        <Tooltip placement="top" content="Suspend">
-                                            <Button.Zoom size="sm">
+                                        <Tooltip placement="top" content={item.enabled === false ? "Enable" : "Suspend"}>
+                                            <Button.Zoom 
+                                                size="sm"
+                                                onClick={async () => {
+                                                    const action = item.enabled === false ? "enable" : "disable";
+                                                    const actionText = item.enabled === false ? "enable" : "suspend";
+                                                    
+                                                    if (window.confirm(`Are you sure you want to ${actionText} user "${item.name}"?`)) {
+                                                        try {
+                                                            await toggleUserStatus({
+                                                                username: item.username,
+                                                                action: action
+                                                            });
+                                                            alert(`User ${item.name} has been ${actionText}d successfully!`);
+                                                            fetchUsers(); // Refresh the users list
+                                                        } catch (error) {
+                                                            console.error('Error toggling user status:', error);
+                                                            alert(`Failed to ${actionText} user: ${error.response?.data?.message || error.message}`);
+                                                        }
+                                                    }
+                                                }}
+                                            >
                                                 <Icon className="text-base/4.5" name="user-cross-fill" />
                                             </Button.Zoom>
                                         </Tooltip>

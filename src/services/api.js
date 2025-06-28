@@ -241,6 +241,8 @@ export const createUser = (data) => api.post('/keycloak/create_user', data);
 
 export const deleteUser = (data) => api.delete('/keycloak/delete_user', { data });
 
+export const toggleUserStatus = (data) => api.post('/keycloak/toggle_user_status', data);
+
 export const logoutUser = () => api.get('/keycloak/logout_user');
 
 // Replace user role
