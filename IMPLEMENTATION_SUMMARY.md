@@ -86,6 +86,42 @@ Your backend should expect:
 - Standard multipart/form-data handling
 - JWT authentication via Bearer token
 
+## 🔐 Permission Assignment System - NEW
+
+### **User Permission Management**
+- ✅ **Added:** Permission assignment functionality on User Management page
+- ✅ **Added:** `/keycloak/assign_permission` endpoint integration
+- ✅ **Added:** Bulk permission assignment for files and folders
+- ✅ **Added:** "All Access" toggle for root directory permissions
+- ✅ **Added:** Individual file/folder permission control
+
+### **Permission Assignment API**
+```javascript
+// API Endpoint: POST /keycloak/assign_permission
+// Request Format:
+{
+  "resources": [
+    {"name": "Beynon Brochures & Certificates", "type": "dir"}, 
+    {"name": "efgh", "type": "file"}
+  ],
+  "username": "mianfaizanxgp@gmail.com"
+}
+```
+
+### **User Interface Features**
+- ✅ **Modal Interface:** Clean permission management modal
+- ✅ **All Access Toggle:** Grant/deny access to everything at once
+- ✅ **Individual Controls:** Toggle permissions for specific files/folders
+- ✅ **Visual Feedback:** Clear indicators for granted/denied permissions
+- ✅ **Loading States:** Prevent duplicate submissions during save
+- ✅ **Error Handling:** Comprehensive error messages and retry options
+
+### **Permission Types Supported**
+- **All Access:** Root directory permission (`{"name": ".", "type": "dir"}`)
+- **Directory Access:** Folder permissions (`{"type": "dir"}`)
+- **File Access:** Individual file permissions (`{"type": "file"}`)
+- **Remove Access:** Empty resources array removes all permissions
+
 ## 🧪 Testing Instructions
 
 ### **Access the Application:**
