@@ -1,15 +1,7 @@
 import React, {useState} from "react";
 import {Button, Head, Icon, PageHead} from "../../../componenets";
-import AudienceOverviewCard from "./AudienceOverviewCard";
-import ActiveUsersCard from "./ActiveUsersCard";
-import WebsitePerformanceCard from "./WebsitePerformanceCard";
-import TrafficChannelListCard from "./TrafficChannelListCard";
-import TrafficChannelCard from "./TrafficChannelCard";
-import UsersCountryCard from "./UsersCountryCard";
-import BrowserUsedCard from "./BrowserUsedCard";
-import PagesViewCard from "./PagesViewCard";
-import SessionsCard from "./SessionsCard";
 import LoginAnalyticsCard from "./LoginAnalyticsCard";
+import UserStatusSummaryCard from "./UserStatusSummaryCard";
 
 import { Menu } from '@headlessui/react';
 import { usePopper } from 'react-popper';
@@ -70,37 +62,13 @@ const AnalyticsHomepage = () => {
         </PageHead.Group>
       </PageHead>
       <div className="grid grid-flow-dense grid-cols-12 gap-7">
-        <div className="col-span-12 lg:col-span-8 2xl:col-span-6">
-          <AudienceOverviewCard />
-        </div>
-        <div className="col-span-12 md:col-span-6 lg:col-span-4 2xl:col-span-3">
-          <ActiveUsersCard />
-        </div>
-        <div className="col-span-12 md:col-span-6 lg:col-span-4 2xl:col-span-3">
-          <WebsitePerformanceCard />
-        </div>
-        <div className="col-span-12 md:col-span-6 lg:col-span-4 2xl:col-span-3">
+        <div className="col-span-12 md:col-span-6 lg:col-span-6 xl:col-span-4">
           <LoginAnalyticsCard />
         </div>
-        <div className="col-span-12 lg:col-span-8 2xl:col-span-6">
-          <TrafficChannelListCard />
+        <div className="col-span-12 md:col-span-6 lg:col-span-6 xl:col-span-4">
+          <UserStatusSummaryCard />
         </div>
-        <div className="col-span-12 md:col-span-6 2xl:col-span-3">
-          <TrafficChannelCard />
-        </div>
-        <div className="col-span-12 md:col-span-6 2xl:col-span-3">
-          <UsersCountryCard />
-        </div>
-        <div className="col-span-12 2xl:col-span-6">
-          <BrowserUsedCard />
-        </div>
-        <div className="col-span-12 md:col-span-6 2xl:col-span-3">
-          <PagesViewCard />
-        </div>
-        <div className="col-span-12 md:col-span-6 2xl:col-span-3">
-          <SessionsCard />
-        </div>
-    </div>
+      </div>
     </>
   );
 };
