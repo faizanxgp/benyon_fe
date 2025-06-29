@@ -11,8 +11,7 @@ const PdfPreviewModal = ({ show, setShow, filePath, fileName }) => {
     const [quality, setQuality] = useState('medium');
     const [error, setError] = useState(null);
     const [pdfInfo, setPdfInfo] = useState(null);
-    const [zoomScale, setZoomScale] = useState(100); // Client-side zoom percentage
-    const [zoomInput, setZoomInput] = useState('100'); // For editable input
+    const [zoomScale, setZoomScale] = useState(50); // Client-side zoom percentage
 
     // Custom styles for scrollbars
     const scrollbarStyles = `
@@ -94,8 +93,7 @@ const PdfPreviewModal = ({ show, setShow, filePath, fileName }) => {
             setScale(1.5);
             setQuality('medium');
             setError(null);
-            setZoomScale(100); // Reset zoom to 100%
-            setZoomInput('100');
+            setZoomScale(50); // Set default zoom to 50%
             loadPdfPage(1);
         } else {
             setImageData(null);
@@ -104,35 +102,7 @@ const PdfPreviewModal = ({ show, setShow, filePath, fileName }) => {
     }, [show, filePath]);
 
     // Handle zoom input change
-    const handleZoomChange = (event) => {
-        const value = event.target.value.replace('%', ''); // Remove % if user types it
-        // Allow only numbers and empty string
-        if (/^\d{0,3}$/.test(value)) {
-            setZoomInput(value);
-        }
-    };
 
-    // Validate and apply zoom on blur or Enter
-    const applyZoom = () => {
-        const numValue = parseInt(zoomInput);
-        if (!isNaN(numValue) && numValue >= 10 && numValue <= 500) {
-            setZoomScale(numValue);
-            setZoomInput(numValue.toString());
-        } else {
-            setZoomInput(zoomScale.toString()); // revert to last valid
-        }
-    };
-
-    const handleZoomBlur = () => {
-        applyZoom();
-    };
-
-    const handleZoomKeyDown = (event) => {
-        if (event.key === 'Enter') {
-            applyZoom();
-            event.target.blur();
-        }
-    };
 
     const loadPdfPage = async (page) => {
         if (!filePath) return;
@@ -215,18 +185,25 @@ const PdfPreviewModal = ({ show, setShow, filePath, fileName }) => {
                         {/* Zoom Input */}
                         <div className="flex items-center gap-2">
                             <label className="text-sm text-gray-600 dark:text-gray-400">Zoom:</label>
-                            <div className="relative">
-                                <input
-                                    type="text"
-                                    value={zoomInput + '%'}
-                                    onChange={handleZoomChange}
-                                    onBlur={handleZoomBlur}
-                                    onKeyDown={handleZoomKeyDown}
-                                    className="w-16 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-center"
-                                    placeholder="100%"
-                                    inputMode="numeric"
-                                />
-                            </div>
+                            <select
+                                value={zoomScale}
+                                onChange={e => {
+                                    const val = parseInt(e.target.value);
+                                    setZoomScale(val);
+                                }}
+                                className="w-24 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-center"
+                                style={{ minWidth: '80px' }}
+                            >
+                                <option value={50}>50%</option>
+                                <option value={75}>75%</option>
+                                <option value={100}>100%</option>
+                                <option value={125}>125%</option>
+                                <option value={150}>150%</option>
+                                <option value={200}>200%</option>
+                                <option value={300}>300%</option>
+                                <option value={400}>400%</option>
+                                <option value={500}>500%</option>
+                            </select>
                         </div>
                         
                         <Button.Zoom size="sm" onClick={() => setShow(false)}>
@@ -284,27 +261,36 @@ const PdfPreviewModal = ({ show, setShow, filePath, fileName }) => {
                                 flexShrink: 0,
                                 display: 'flex',
                                 alignItems: 'flex-start',
-                                justifyContent: 'flex-start',
+                                justifyContent: 'center', // center horizontally
                             }}
                         >
                             <div
                                 style={{
-                                    transform: `scale(${zoomScale / 100})`,
-                                    transformOrigin: 'top left',
-                                    display: 'inline-block',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'flex-start',
+                                    width: '100%',
                                 }}
                             >
-                                <img
-                                    src={imageData}
-                                    alt={`Page ${currentPage} of ${fileName}`}
+                                <div
                                     style={{
-                                        display: 'block',
-                                        width: '1500px',
-                                        height: 'auto',
-                                        minHeight: '1000px',
-                                        margin: '20px',
+                                        transform: `scale(${zoomScale / 100})`,
+                                        transformOrigin: 'top center',
+                                        display: 'inline-block',
                                     }}
-                                />
+                                >
+                                    <img
+                                        src={imageData}
+                                        alt={`Page ${currentPage} of ${fileName}`}
+                                        style={{
+                                            display: 'block',
+                                            width: '1500px',
+                                            height: 'auto',
+                                            minHeight: '1000px',
+                                            margin: '20px auto',
+                                        }}
+                                    />
+                                </div>
                             </div>
                         </div>
                     )}
