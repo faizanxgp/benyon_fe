@@ -2,6 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Icon, Button } from '../../../componenets';
 import { getPdfPagePreview } from '../../../services/api';
 
+// Helper to fetch PDF info (page count, etc)
+// Use the same axios instance and baseURL as other file APIs
+import { getPdfInfo } from '../../../services/api';
+async function fetchPdfInfo(filePath) {
+    const response = await getPdfInfo(filePath);
+    return response.data;
+}
+
 const PdfPreviewModal = ({ show, setShow, filePath, fileName }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -88,17 +96,34 @@ const PdfPreviewModal = ({ show, setShow, filePath, fileName }) => {
 
     // Reset state when modal opens/closes
     useEffect(() => {
-        if (show && filePath) {
+        let ignore = false;
+        async function loadInfoAndFirstPage() {
             setCurrentPage(1);
             setScale(1.5);
             setQuality('medium');
             setError(null);
             setZoomScale(50); // Set default zoom to 50%
-            loadPdfPage(1);
+            setTotalPages(1); // Reset
+            // Fetch PDF info (page count, etc)
+            try {
+                const info = await fetchPdfInfo(filePath);
+                if (!ignore && info && info.detail && typeof info.detail.page_count === 'number') {
+                    setTotalPages(info.detail.page_count);
+                }
+            } catch (e) {
+                // If info fails, fallback to 1 page
+                setTotalPages(1);
+            }
+            // Load first page
+            if (!ignore) loadPdfPage(1);
+        }
+        if (show && filePath) {
+            loadInfoAndFirstPage();
         } else {
             setImageData(null);
             setError(null);
         }
+        return () => { ignore = true; };
     }, [show, filePath]);
 
     // Handle zoom input change
@@ -150,9 +175,11 @@ const PdfPreviewModal = ({ show, setShow, filePath, fileName }) => {
     };
 
     const handleNextPage = () => {
-        const newPage = currentPage + 1;
-        setCurrentPage(newPage);
-        loadPdfPage(newPage);
+        if (currentPage < totalPages) {
+            const newPage = currentPage + 1;
+            setCurrentPage(newPage);
+            loadPdfPage(newPage);
+        }
     };
 
     if (!show) return null;
@@ -323,7 +350,7 @@ const PdfPreviewModal = ({ show, setShow, filePath, fileName }) => {
                             variant="secondary" 
                             size="sm" 
                             onClick={handleNextPage}
-                            disabled={loading}
+                            disabled={loading || currentPage >= totalPages}
                         >
                             Next
                             <Icon className="text-sm ml-1" name="arrow-right" />

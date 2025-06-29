@@ -377,6 +377,13 @@ export const downloadFile = (filePath) => {
   });
 };
 
+// PDF info function
+export const getPdfInfo = (filePath) => {
+  const formData = new FormData();
+  formData.append('path', filePath);
+  return api.post('/files/pdf_info', formData);
+};
+
 /**
  * LOGOUT FLOW DOCUMENTATION
  * 
