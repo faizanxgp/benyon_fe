@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Icon, Button } from '../../../componenets';
-import { getPdfPagePreview } from '../../../services/api';
+import { getPdfPagePreview, downloadFile } from '../../../services/api';
 
 // Helper to fetch PDF info (page count, etc)
 // Use the same axios instance and baseURL as other file APIs
@@ -182,6 +182,57 @@ const PdfPreviewModal = ({ show, setShow, filePath, fileName }) => {
         }
     };
 
+    const handleDownload = async () => {
+        if (!filePath) return;
+
+        setLoading(true);
+        setError(null);
+
+        try {
+            // Direct download using the API
+            const response = await downloadFile(filePath);
+            
+            // Create a blob URL for the downloaded file
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+
+            // Create a link element to trigger the download
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', fileName || 'download.pdf'); // Set default file name
+
+            // Append to body, click and remove
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Revoke the object URL after some time
+            setTimeout(() => window.URL.revokeObjectURL(url), 100);
+        } catch (err) {
+            console.error('Error downloading file:', err);
+            setError('Failed to download file: ' + (err.response?.data?.message || err.message));
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Download handler for PDF
+    const handleDownloadPdf = async () => {
+        try {
+            const response = await downloadFile(filePath);
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName || 'document.pdf';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            alert('Failed to download PDF: ' + (error.response?.data?.message || error.message));
+        }
+    };
+
     if (!show) return null;
 
     return (
@@ -233,6 +284,11 @@ const PdfPreviewModal = ({ show, setShow, filePath, fileName }) => {
                             </select>
                         </div>
                         
+                        {/* Download Button */}
+                        <Button.Zoom size="sm" onClick={handleDownloadPdf} title="Download PDF">
+                            <Icon className="text-xl text-primary-600" name="download" />
+                        </Button.Zoom>
+
                         <Button.Zoom size="sm" onClick={() => setShow(false)}>
                             <Icon className="text-xl text-slate-400 hover:text-slate-600" name="cross" />
                         </Button.Zoom>
@@ -357,9 +413,21 @@ const PdfPreviewModal = ({ show, setShow, filePath, fileName }) => {
                         </Button>
                     </div>
 
-                    <Button variant="secondary" size="sm" onClick={() => setShow(false)}>
-                        Close
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <Button 
+                            variant="primary" 
+                            size="sm" 
+                            onClick={handleDownload}
+                            loading={loading}
+                        >
+                            <Icon className="text-sm mr-1" name="download" />
+                            Download
+                        </Button>
+                        
+                        <Button variant="secondary" size="sm" onClick={() => setShow(false)}>
+                            Close
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>
