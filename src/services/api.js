@@ -1,3 +1,14 @@
+// Delete file or folder (form-data, DELETE method)
+export const deleteFileOrFolder = (filePath) => {
+  const formData = new FormData();
+  formData.append('path', filePath);
+  return api.delete('/files/delete', {
+    data: formData,
+    headers: {
+      // Let browser set Content-Type for form-data
+    },
+  });
+};
 import axios from 'axios';
 
 // Loading management

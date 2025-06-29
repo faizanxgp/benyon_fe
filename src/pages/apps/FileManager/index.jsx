@@ -33,39 +33,22 @@ const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedIt
         ],
     })
 
-    const handleShowDetails = () => {
-        setSelectedItem(item);
-        setShowDetailsModal(true);
-    };
 
-    const handlePreview = async () => {
+    // Delete handler
+    const handleDelete = async () => {
+        if (!window.confirm(`Are you sure you want to delete '${item.name}'? This action cannot be undone.`)) return;
         try {
-            // Construct the full file path
             const filePath = currentPath === "/" ? item.name : `${currentPath.slice(1)}/${item.name}`;
-            console.log('Previewing file at path:', filePath);
-            
-            // Check if it's a PDF file
-            if (item.name.toLowerCase().endsWith('.pdf')) {
-                // Use PDF preview modal for PDF files
-                setPdfPreviewPath(filePath);
-                setPdfPreviewFileName(item.name);
-                setShowPdfPreviewModal(true);
-                return;
-            }
-            
-            // Use regular preview for other file types
-            const response = await getFilePreview(filePath);
-            console.log('Preview response:', response);
-            
-            // Handle the preview response - API returns {detail: "<base64-encoded-image-string>"}
-            if (response.data && response.data.detail) {
-                setPreviewData(response.data.detail);
-                setPreviewFileName(item.name);
-                setShowPreviewModal(true);
+            const { deleteFileOrFolder } = await import('../../../services/api');
+            await deleteFileOrFolder(filePath);
+            // Reload the same directory path by updating the URL hash and reloading
+            if (typeof window !== 'undefined') {
+                const encodedPath = encodeURIComponent(currentPath);
+                window.location.hash = `#path=${encodedPath}`;
+                window.location.reload();
             }
         } catch (error) {
-            console.error('Error loading preview:', error);
-            alert('Failed to load preview: ' + (error.response?.data?.message || error.message));
+            alert('Failed to delete: ' + (error.response?.data?.message || error.message));
         }
     };
 
@@ -111,25 +94,6 @@ const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedIt
                 <Menu.Items modal={false} ref={setDropdownContent} style={styles.popper} {...attributes.popper} className="border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 rounded-md shadow-lg z-[9999] min-w-[150px] fixed"
                     onClick={(e) => e.stopPropagation()}>
                     <ul className="py-2">
-                        <li>
-                            <Menu.Item as={Fragment}>
-                                <button onClick={handleShowDetails} className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300 outline-none">
-                                    <Icon className="text-lg/none w-8 opacity-80 text-primary-600 text-start" name="eye" />
-                                    <span>Details</span>
-                                </button>
-                            </Menu.Item>
-                        </li>
-                        {/* Only show Preview option for files, not folders */}
-                        {!item.is_dir && (
-                            <li>
-                                <Menu.Item as={Fragment}>
-                                    <button onClick={handlePreview} className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300 outline-none">
-                                        <Icon className="text-lg/none w-8 opacity-80 text-primary-600 text-start" name="monitor" />
-                                        <span>Preview</span>
-                                    </button>
-                                </Menu.Item>
-                            </li>
-                        )}
                         {/* Only show Download option for files, not folders */}
                         {!item.is_dir && (
                             <li>
@@ -142,7 +106,7 @@ const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedIt
                             </li>
                         )}
                         <li>
-                            <Menu.Item as="button" className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300">
+                            <Menu.Item as="button" className="relative px-5 py-2 flex items-center w-full rounded-[inherit] text-xs leading-5 text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:dark:text-primary-600 hover:bg-slate-50 hover:dark:bg-slate-900 transition-all duration-300" onClick={handleDelete}>
                                 <Icon className="text-lg/none w-8 opacity-80 text-primary-600 text-start" name="trash" />
                                 <span>Delete</span>
                             </Menu.Item>
@@ -457,6 +421,16 @@ const FileManagerPage = () => {
     //     };
     // }, []);
 
+    // On mount, check for hash path and set currentPath
+    useEffect(() => {
+        if (window.location.hash.startsWith('#path=')) {
+            const hashPath = decodeURIComponent(window.location.hash.replace('#path=', ''));
+            if (hashPath && hashPath !== currentPath) {
+                setCurrentPath(hashPath);
+            }
+        }
+    }, []);
+
     useEffect(() => {
         setLoading(true);
         getDirContents(currentPath)
@@ -470,6 +444,17 @@ const FileManagerPage = () => {
             })
             .finally(() => setLoading(false));
     }, [currentPath]);
+
+    // Listen for refreshDirContents event to reload same directory after delete
+    useEffect(() => {
+        const handler = (e) => {
+            if (e.detail && typeof e.detail.path === 'string') {
+                setCurrentPath(e.detail.path);
+            }
+        };
+        window.addEventListener('refreshDirContents', handler);
+        return () => window.removeEventListener('refreshDirContents', handler);
+    }, []);
 
     // Check admin status on component mount
     useEffect(() => {
