@@ -359,6 +359,16 @@ export const getFilePreview = (filePath) => {
   return api.post("/files/file_preview", formData);
 };
 
+// PDF page preview function
+export const getPdfPagePreview = (filePath, page = 1, quality = 'medium', scale = 1.5) => {
+  const formData = new FormData();
+  formData.append("path", filePath);
+  formData.append("page", page.toString());
+  formData.append("quality", quality);
+  formData.append("scale", scale.toString());
+  return api.post("/files/pdf_page", formData);
+};
+
 export const downloadFile = (filePath) => {
   const formData = new FormData();
   formData.append("path", filePath);

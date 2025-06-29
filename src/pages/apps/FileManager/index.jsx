@@ -13,12 +13,13 @@ import FileCopyModal from './FileCopyModal';
 import FileMoveModal from './FileMoveModal';
 import FileShareModal from './FileShareMOdal';
 import FilePreviewModal from './FilePreviewModal';
+import PdfPreviewModal from './PdfPreviewModal';
 
 import { Menu } from '@headlessui/react';
 import { usePopper } from 'react-popper';
 import { useTheme } from "../../../layout/context";
 
-const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedItem, setShowShareModal, setShowCopyModal, setShowMoveModal, currentPath, setShowPreviewModal, setPreviewData, setPreviewFileName, onFileDownloaded}) => {
+const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedItem, setShowShareModal, setShowCopyModal, setShowMoveModal, currentPath, setShowPreviewModal, setPreviewData, setPreviewFileName, setShowPdfPreviewModal, setPdfPreviewPath, setPdfPreviewFileName, onFileDownloaded}) => {
     const theme = useTheme();
     let [dropdownToggle, setDropdownToggle] = useState()
     let [dropdownContent, setDropdownContent] = useState()
@@ -43,6 +44,16 @@ const ItemActionDropdown = ({className, item, setShowDetailsModal, setSelectedIt
             const filePath = currentPath === "/" ? item.name : `${currentPath.slice(1)}/${item.name}`;
             console.log('Previewing file at path:', filePath);
             
+            // Check if it's a PDF file
+            if (item.name.toLowerCase().endsWith('.pdf')) {
+                // Use PDF preview modal for PDF files
+                setPdfPreviewPath(filePath);
+                setPdfPreviewFileName(item.name);
+                setShowPdfPreviewModal(true);
+                return;
+            }
+            
+            // Use regular preview for other file types
             const response = await getFilePreview(filePath);
             console.log('Preview response:', response);
             
@@ -299,6 +310,9 @@ const FileManagerPage = () => {
     const [showPreviewModal, setShowPreviewModal] = useState(false);
     const [previewData, setPreviewData] = useState(null);
     const [previewFileName, setPreviewFileName] = useState('');
+    const [showPdfPreviewModal, setShowPdfPreviewModal] = useState(false);
+    const [pdfPreviewPath, setPdfPreviewPath] = useState('');
+    const [pdfPreviewFileName, setPdfPreviewFileName] = useState('');
 
     const [currentPath, setCurrentPath] = useState("/");
     const [files, setFiles] = useState([]);
@@ -705,16 +719,27 @@ const FileManagerPage = () => {
                                         e.preventDefault();
                                         // If it's a folder, navigate into it
                                         if (item.is_dir) {
-                                        // Avoid double slashes
-                                        setCurrentPath(currentPath === "/" ? `/${item.name}` : `${currentPath}/${item.name}`);
+                                            // Avoid double slashes
+                                            setCurrentPath(currentPath === "/" ? `/${item.name}` : `${currentPath}/${item.name}`);
+                                        } else if (item.name.toLowerCase().endsWith('.pdf')) {
+                                            // If it's a PDF file, open PDF preview
+                                            const filePath = currentPath === "/" ? item.name : `${currentPath.slice(1)}/${item.name}`;
+                                            setPdfPreviewPath(filePath);
+                                            setPdfPreviewFileName(item.name);
+                                            setShowPdfPreviewModal(true);
                                         }
                                     }}
                                     className="flex flex-col pt-6 pb-4"
-                                    style={{ cursor: item.is_dir ? "pointer" : "default" }}
-                                    title={item.is_dir ? "Open folder" : item.name}
+                                    style={{ cursor: item.is_dir || item.name.toLowerCase().endsWith('.pdf') ? "pointer" : "default" }}
+                                    title={item.is_dir ? "Open folder" : (item.name.toLowerCase().endsWith('.pdf') ? "Preview PDF" : item.name)}
                                     >
                                     <div className="h-18 [&>svg]:h-full [&>svg]:mx-auto">
-                                        {item.is_dir ? fileManagerIcons.folderAlt : fileManagerIcons.fileDocAlt}
+                                        {item.is_dir 
+                                            ? fileManagerIcons.folderAlt 
+                                            : item.name.toLowerCase().endsWith('.pdf')
+                                                ? fileManagerIcons.filePDFAlt
+                                                : fileManagerIcons.fileDocAlt
+                                        }
                                     </div>
                                     <div className="text-sm/snug text-center font-medium pt-4 flex justify-center">
                                         <span className="line-clamp-1">{item.name}</span>
@@ -732,6 +757,9 @@ const FileManagerPage = () => {
                                         setShowPreviewModal={setShowPreviewModal}
                                         setPreviewData={setPreviewData}
                                         setPreviewFileName={setPreviewFileName}
+                                        setShowPdfPreviewModal={setShowPdfPreviewModal}
+                                        setPdfPreviewPath={setPdfPreviewPath}
+                                        setPdfPreviewFileName={setPdfPreviewFileName}
                                         onFileDownloaded={fetchRecentFiles}
                                     />
                                     </div>
@@ -749,6 +777,7 @@ const FileManagerPage = () => {
         <FileMoveModal show={showMoveModal} setShow={setShowMoveModal} />
         <FileShareModal show={showShareModal} setShow={setShowShareModal} />
         <FilePreviewModal show={showPreviewModal} setShow={setShowPreviewModal} previewData={previewData} fileName={previewFileName} />
+        <PdfPreviewModal show={showPdfPreviewModal} setShow={setShowPdfPreviewModal} filePath={pdfPreviewPath} fileName={pdfPreviewFileName} />
 
     </>
   )
