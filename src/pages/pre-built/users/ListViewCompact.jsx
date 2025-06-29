@@ -1,4 +1,4 @@
-import { createUser, deleteUser, getUsersStatus, getUsername, replaceUserRole, toggleUserStatus } from '../../../services/api';
+import { createUser, deleteUser, getUsersStatus, getUsername, replaceUserRole, toggleUserStatus, getDirContents, getUserPermissions, assignPermissions, unassignPermissions } from '../../../services/api';
 // import { getUsersStatus } from '../../../services/api';
 import React, { useEffect, useState, Fragment } from 'react';
 
@@ -369,6 +369,15 @@ const UsersListCompactPage = () => {
     const [showCreateUserDialog, setShowCreateUserDialog] = useState(false);
     const [loading, setLoading] = useState(false);
     const [createUserLoading, setCreateUserLoading] = useState(false);
+    
+    // Permissions modal states
+    const [showPermissionsModal, setShowPermissionsModal] = useState(false);
+    const [selectedUserForPermissions, setSelectedUserForPermissions] = useState(null);
+    const [permissionsLoading, setPermissionsLoading] = useState(false);
+    const [savePermissionsLoading, setSavePermissionsLoading] = useState(false);
+    const [directoryContents, setDirectoryContents] = useState([]);
+    const [userPermissions, setUserPermissions] = useState([]);
+    const [tempPermissions, setTempPermissions] = useState([]);
 
     const [newUser, setNewUser] = useState({
         requiredActions: [],
@@ -463,6 +472,90 @@ const UsersListCompactPage = () => {
     useEffect(() => {
     fetchUsers();
     }, []);
+
+    // Function to check if user has permission for a specific item (including temp changes)
+    const hasPermission = (itemName) => {
+        // First check temp permissions
+        const tempPerm = tempPermissions.find(p => p.name === itemName);
+        if (tempPerm !== undefined) {
+            return tempPerm.granted;
+        }
+        // Fall back to actual permissions
+        return userPermissions.some(resource => resource.resource_name === itemName);
+    };
+
+    // Function to check if user has "All" permissions (including temp changes)
+    const hasAllPermissions = () => {
+        // First check temp permissions
+        const tempAllPerm = tempPermissions.find(p => p.name === ".");
+        if (tempAllPerm !== undefined) {
+            return tempAllPerm.granted;
+        }
+        // Fall back to actual permissions
+        return userPermissions.some(resource => resource.resource_name === ".");
+    };
+
+    // Function to toggle permission for a specific item (UI only - no API call)
+    const toggleItemPermission = (itemName, currentState) => {
+        setTempPermissions(prev => {
+            const existing = prev.find(p => p.name === itemName);
+            if (existing) {
+                // Update existing temp permission
+                return prev.map(p => 
+                    p.name === itemName 
+                        ? { ...p, granted: !currentState }
+                        : p
+                );
+            } else {
+                // Add new temp permission
+                return [...prev, { name: itemName, granted: !currentState }];
+            }
+        });
+    };
+
+    // Function to toggle "All" permissions (UI only - no API call)
+    const toggleAllPermissions = (currentState) => {
+        setTempPermissions(prev => {
+            const existing = prev.find(p => p.name === ".");
+            if (existing) {
+                // Update existing temp permission
+                return prev.map(p => 
+                    p.name === "." 
+                        ? { ...p, granted: !currentState }
+                        : p
+                );
+            } else {
+                // Add new temp permission
+                return [...prev, { name: ".", granted: !currentState }];
+            }
+        });
+    };
+
+    // Function to open permissions modal
+    const openPermissionsModal = async (user) => {
+        setSelectedUserForPermissions(user);
+        setShowPermissionsModal(true);
+        setPermissionsLoading(true);
+        setTempPermissions([]); // Reset temp permissions
+        
+        try {
+            // Fetch directory contents
+            const dirResponse = await getDirContents("/");
+            console.log('Directory contents response:', dirResponse.data);
+            setDirectoryContents(dirResponse.data.detail || []);
+            
+            // Fetch user permissions
+            const permResponse = await getUserPermissions(user.username);
+            console.log('User permissions response:', permResponse.data);
+            setUserPermissions(permResponse.data.resources || []);
+        } catch (error) {
+            console.error('Error loading permissions data:', error);
+            setDirectoryContents([]);
+            setUserPermissions([]);
+        } finally {
+            setPermissionsLoading(false);
+        }
+    };
 
     const theme = useTheme();
     let [dropdownToggle, setDropdownToggle] = useState()
@@ -765,6 +858,16 @@ const UsersListCompactPage = () => {
                                             }}
                                         />
                                     </li>
+                                    <li className="bg-gray-50 dark:bg-gray-1000 px-0.5">
+                                        <Tooltip placement="top" content="Manage Permissions">
+                                            <Button.Zoom 
+                                                size="sm"
+                                                onClick={() => openPermissionsModal(item)}
+                                            >
+                                                <Icon className="text-base/4.5" name="lock" />
+                                            </Button.Zoom>
+                                        </Tooltip>
+                                    </li>
                                     {/* <li>
                                         <ActionDropdown />
                                     </li> */}
@@ -931,6 +1034,282 @@ const UsersListCompactPage = () => {
             </form>
             </div>
         </div>
+        )}
+
+        {/* Permissions Modal */}
+        {showPermissionsModal && (
+            <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black bg-opacity-30">
+                <div className="bg-white dark:bg-gray-900 rounded shadow-lg w-full max-w-4xl max-h-[90vh] overflow-hidden relative flex flex-col">
+                    {/* Header */}
+                    <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+                        <h2 className="text-xl font-bold">
+                            Manage Permissions - {selectedUserForPermissions?.name} ({selectedUserForPermissions?.username})
+                        </h2>
+                        <button
+                            className="text-gray-500 hover:text-red-500 text-2xl p-1"
+                            onClick={() => {
+                                setShowPermissionsModal(false);
+                                setSelectedUserForPermissions(null);
+                                setDirectoryContents([]);
+                                setUserPermissions([]);
+                                setTempPermissions([]);
+                                setSavePermissionsLoading(false);
+                            }}
+                            aria-label="Close"
+                        >
+                            &times;
+                        </button>
+                    </div>
+                    
+                    {/* Content - Scrollable */}
+                    <div className="p-6 overflow-y-auto flex-1">
+                        <div className="mb-4">
+                            <h3 className="text-lg font-semibold mb-2">Root Directory Contents</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                                Select files and folders to manage permissions for this user.
+                            </p>
+                            
+                            {/* All Permissions Toggle */}
+                            <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center">
+                                        <Icon className="text-2xl mr-3 text-purple-500" name="shield-check" />
+                                        <div>
+                                            <div className="font-medium text-gray-900 dark:text-white text-lg">
+                                                All Access
+                                            </div>
+                                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                                                Grant or deny access to all files and folders
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <label className="inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="sr-only peer"
+                                                checked={hasAllPermissions()}
+                                                onChange={(e) => toggleAllPermissions(hasAllPermissions())}
+                                            />
+                                            <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-purple-600"></div>
+                                            <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                                {hasAllPermissions() ? 'All Granted' : 'All Denied'}
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {permissionsLoading ? (
+                            <div className="flex items-center justify-center py-8">
+                                <div className="flex items-center space-x-2">
+                                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+                                    <span className="text-sm text-gray-600 dark:text-gray-300">Loading directory contents...</span>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                {directoryContents.length === 0 ? (
+                                    <div className="text-center py-8 text-gray-500">
+                                        No files or folders found in root directory.
+                                    </div>
+                                ) : (
+                                    <div className="grid gap-2">
+                                        {directoryContents.map((item, index) => (
+                                            <div 
+                                                key={index} 
+                                                className="flex items-center p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                            >
+                                                <div className="flex items-center flex-1">
+                                                    <Icon 
+                                                        className={`text-2xl mr-3 ${
+                                                            item.is_dir === true 
+                                                                ? 'text-blue-500' 
+                                                                : 'text-gray-500'
+                                                        }`} 
+                                                        name={item.is_dir === true ? 'folder' : 'file-docs'} 
+                                                    />
+                                                    <div>
+                                                        <div className="font-medium text-gray-900 dark:text-white">
+                                                            {item.name}
+                                                        </div>
+                                                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                                                            {item.is_dir === true ? 'Directory' : 'File'}
+                                                            {item.size_bytes && ` • ${item.size_bytes} bytes`}
+                                                            {item.last_modified && ` • Modified: ${new Date(item.last_modified).toLocaleDateString()}`}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center space-x-2">
+                                                    <div className="flex items-center">
+                                                        <label className="inline-flex items-center cursor-pointer">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="sr-only peer"
+                                                                checked={hasAllPermissions() || hasPermission(item.name)}
+                                                                disabled={hasAllPermissions()}
+                                                                onChange={(e) => toggleItemPermission(item.name, hasPermission(item.name))}
+                                                            />
+                                                            <div className={`relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 ${hasAllPermissions() ? 'opacity-50 cursor-not-allowed' : ''}`}></div>
+                                                            <span className={`ms-3 text-sm font-medium text-gray-900 dark:text-gray-300 ${hasAllPermissions() ? 'opacity-50' : ''}`}>
+                                                                {(hasAllPermissions() || hasPermission(item.name)) ? 'Granted' : 'Denied'}
+                                                                {hasAllPermissions() && <span className="text-xs text-purple-500 ml-1">(via All)</span>}
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* Footer with buttons - Always visible */}
+                    <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-700 flex-shrink-0 bg-gray-50 dark:bg-gray-800">
+                        <button
+                            className="px-4 py-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+                            onClick={() => {
+                                setShowPermissionsModal(false);
+                                setSelectedUserForPermissions(null);
+                                setDirectoryContents([]);
+                                setUserPermissions([]);
+                                setTempPermissions([]);
+                                setSavePermissionsLoading(false);
+                            }}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            className="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                            disabled={savePermissionsLoading}
+                            onClick={async () => {
+                                try {
+                                    setSavePermissionsLoading(true);
+                                    
+                                    // Determine current permissions state (including temp changes)
+                                    const currentAllPermissions = hasAllPermissions();
+                                    const currentIndividualPermissions = new Set();
+                                    
+                                    // Get all currently granted individual permissions
+                                    directoryContents.forEach(item => {
+                                        if (hasPermission(item.name)) {
+                                            currentIndividualPermissions.add(item.name);
+                                        }
+                                    });
+                                    
+                                    // Determine what was originally granted
+                                    const originalAllPermissions = userPermissions.some(resource => resource.resource_name === ".");
+                                    const originalIndividualPermissions = new Set(
+                                        userPermissions
+                                            .filter(resource => resource.resource_name !== ".")
+                                            .map(resource => resource.resource_name)
+                                    );
+                                    
+                                    // Prepare resources to assign and resource names to unassign
+                                    const resourcesToAssign = [];
+                                    const resourceNamesToUnassign = [];
+                                    
+                                    // Handle "All" permissions
+                                    if (currentAllPermissions && !originalAllPermissions) {
+                                        // Granting "All" permissions (new)
+                                        resourcesToAssign.push({ name: ".", type: "dir" });
+                                        // Also unassign any individual permissions since "All" covers everything
+                                        originalIndividualPermissions.forEach(name => {
+                                            resourceNamesToUnassign.push(name);
+                                        });
+                                    } else if (!currentAllPermissions && originalAllPermissions) {
+                                        // Removing "All" permissions
+                                        resourceNamesToUnassign.push(".");
+                                    }
+                                    
+                                    // Handle individual permissions (only if not granting "All")
+                                    if (!currentAllPermissions) {
+                                        // Find individual permissions to assign
+                                        currentIndividualPermissions.forEach(itemName => {
+                                            if (!originalIndividualPermissions.has(itemName)) {
+                                                // This is a new permission to assign
+                                                const item = directoryContents.find(item => item.name === itemName);
+                                                if (item) {
+                                                    resourcesToAssign.push({
+                                                        name: item.name,
+                                                        type: item.is_dir === true ? 'dir' : 'file'
+                                                    });
+                                                }
+                                            }
+                                        });
+                                        
+                                        // Find individual permissions to unassign
+                                        originalIndividualPermissions.forEach(itemName => {
+                                            if (!currentIndividualPermissions.has(itemName)) {
+                                                // This permission should be removed
+                                                resourceNamesToUnassign.push(itemName);
+                                            }
+                                        });
+                                    }
+                                    
+                                    // Execute API calls
+                                    const promises = [];
+                                    
+                                    if (resourcesToAssign.length > 0) {
+                                        promises.push(assignPermissions(selectedUserForPermissions.username, resourcesToAssign));
+                                    }
+                                    
+                                    if (resourceNamesToUnassign.length > 0) {
+                                        promises.push(unassignPermissions(selectedUserForPermissions.username, resourceNamesToUnassign));
+                                    }
+                                    
+                                    // Wait for all API calls to complete
+                                    await Promise.all(promises);
+                                    
+                                    // Create success message
+                                    let successMessage = `Permissions updated successfully for ${selectedUserForPermissions.name}!\n\n`;
+                                    
+                                    if (resourcesToAssign.length > 0) {
+                                        successMessage += `Granted access to ${resourcesToAssign.length} item(s):\n`;
+                                        resourcesToAssign.forEach(resource => {
+                                            successMessage += `• ${resource.name} (${resource.type})\n`;
+                                        });
+                                        if (resourceNamesToUnassign.length > 0) {
+                                            successMessage += '\n';
+                                        }
+                                    }
+                                    
+                                    if (resourceNamesToUnassign.length > 0) {
+                                        successMessage += `Removed access from ${resourceNamesToUnassign.length} item(s):\n`;
+                                        resourceNamesToUnassign.forEach(name => {
+                                            successMessage += `• ${name}\n`;
+                                        });
+                                    }
+                                    
+                                    if (resourcesToAssign.length === 0 && resourceNamesToUnassign.length === 0) {
+                                        successMessage += "No changes were made to permissions.";
+                                    }
+                                    
+                                    alert(successMessage);
+                                    
+                                    // Close the modal and reset states
+                                    setShowPermissionsModal(false);
+                                    setSelectedUserForPermissions(null);
+                                    setDirectoryContents([]);
+                                    setUserPermissions([]);
+                                    setTempPermissions([]);
+                                    
+                                } catch (error) {
+                                    console.error('Error saving permissions:', error);
+                                    alert('Failed to save permissions: ' + (error.response?.data?.message || error.message));
+                                } finally {
+                                    setSavePermissionsLoading(false);
+                                }
+                            }}
+                        >
+                            {savePermissionsLoading ? 'Saving...' : 'Save Permissions'}
+                        </button>
+                    </div>
+                </div>
+            </div>
         )}
 
     </>

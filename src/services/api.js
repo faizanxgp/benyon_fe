@@ -16,7 +16,7 @@ export const setLoadingCallbacks = (showCallback, hideCallback) => {
 // const BEARER = 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtRHgzSGkwcU44Y24tSmVyNUNfTUVGc0NUUUd3RVVLZHRHVi1ITmptS2NjIn0.eyJleHAiOjE3NTA1OTAwOTgsImlhdCI6MTc1MDU3MjA5OCwianRpIjoib25ydHJvOmEwM2Y4Mzg3LTk2ODYtNGU1OS05YTBhLTQ3NGQxMmViZmY0ZiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvdGVhbV9vbmxpbmUiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZjAxNDU3MTktZTc2NS00ZDE1LTgxOTktODYyM2I5YWZjNWVhIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYmVueW9uX2ZlIiwic2lkIjoiNDcwYjQyMWMtNWJhZi00ZGM0LWI5YmItNzkyZmFkYmVkY2VmIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLXRlYW1fb25saW5lIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJiZW55b25fZmUiOnsicm9zZXMiOlsiYWRtaW4iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6Ikhhc3NhYW4gUWF5eXVtIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiaGFzc2FhbnFAZ21haWwuY29tIiwiZ2l2ZW5fbmFtZSI6Ikhhc3NhYW4iLCJmYW1pbHlfbmFtZSI6IlFheXl1bSIsImVtYWlsIjoiaGFzc2FhbnFAZ21haWwuY29tIn0.St1Wb53NR6k1ZbIOstVAZ7KF4kztqeJ0Au0CXcO7PHlu8KlTduzKBVq2hUju2Mq-kDZlE9toPgfc0x0oDPo1ISSpKHOQ5AuXeu5NY1HWtUqXUhH_0JlYO8T6YqXseTKVUKUgqCmACmxvWw0SjJ1CL2tp7UpUoqXMHL03mBhwzOvd5tHY__dxWpHYztEkVbuFe3lrrjvHok8wTHdScre4li7347WNgfV4P2LyfJITyTst2ooAudbC2Ka4lmTqmghBRFRmuH5EKOSq2Tk2VpOREz86tS2joL0AaJqBAMVRdMvqsRdlFJuhIMcp-hWf9tiBf2m1wv5Uk9wIwpL_0HkZIA';
 
 // Dynamic bearer token that can be updated after login
-let BEARER = localStorage.getItem('access_token') || 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtRHgzSGkwcU44Y24tSmVyNUNfTUVGc0NUUUd3RVVLZHRHVi1ITmptS2NjIn0.eyJleHAiOjE3NTA1OTAwOTgsImlhdCI6MTc1MDU3MjA5OCwianRpIjoib25ydHJvOmEwM2Y4Mzg3LTk2ODYtNGU1OS05YTBhLTQ3NGQxMmViZmY0ZiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvdGVhbV9vbmxpbmUiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZjAxNDU3MTktZTc2NS00ZDE1LTgxOTktODYyM2I5YWZjNWVhIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYmVueW9uX2ZlIiwic2lkIjoiNDcwYjQyMWMtNWJhZi00ZGM0LWI5YmItNzkyZmFkYmVkY2VmIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLXRlYW1fb25saW5lIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJiZW55b25fZmUiOnsicm9zZXMiOlsiYWRtaW4iXX0sImFjY291bnQiOnsicm9zZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6Ikhhc3NhYW4gUWF5eXVtIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiaGFzc2FhbnFAZ21haWwuY29tIiwiZ2l2ZW5fbmFtZSI6Ikhhc3NhYW4iLCJmYW1pbHlfbmFtZSI6IlFheXl1bSIsImVtYWlsIjoiaGFzc2FhbnFAZ21haWwuY29tIn0.St1Wb53NR6k1ZbIOstVAZ7KF4kztqeJ0Au0CXcO7PHlu8KlTduzKBVq2hUju2Mq-kDZlE9toPgfc0x0oDPo1ISSpKHOQ5AuXeu5NY1HWtUqXUhH_0JlYO8T6YqXseTKVUKUgqCmACmxvWw0SjJ1CL2tp7UpUoqXMHL03mBhwzOvd5tHY__dxWpHYztEkVbuFe3lrrjvHok8wTHdScre4li7347WNgfV4P2LyfJITyTst2ooAudbC2Ka4lmTqmghBRFRmuH5EKOSq2Tk2VpOREz86tS2joL0AaJqBAMVRdMvqsRdlFJuhIMcp-hWf9tiBf2m1wv5Uk9wIwpL_0HkZIA';
+let BEARER = localStorage.getItem('access_token') || 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtRHgzSGkwcU44Y24tSmVyNUNfTUVGc0NUUUd3RVVLZHRHVi1ITmptS2NjIn0.eyJleHAiOjE3NTA1OTAwOTgsImlhdCI6MTc1MDU3MjA5OCwianRpIjoib25ydHJvOmEwM2Y4Mzg3LTk2ODYtNGU1OS05YTBhLTQ3NGQxMmViZmY0ZiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvdGVhbV9vbmxpbmUiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZjAxNDU3MTktZTc2NS00ZDE1LTgxOTktODYyM2I5YWZjNWVhIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYmVueW9uX2ZlIiwic2lkIjoiNDcwYjQyMWMtNWJhZi00ZGM0LWI5YmItNzkyZmFkYmVkY2VmIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLXRlYW1fb25saW5lIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJiZW55b25fZmUiOnsicm9zZXMiOlsiYWRtaW4iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6Ikhhc3NhYW4gUWF5eXVtIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiaGFzc2FhbnFAZ21haWwuY29tIiwiZ2l2ZW5fbmFtZSI6Ikhhc3NhYW4iLCJmYW1pbHlfbmFtZSI6IlFheXl1bSIsImVtYWlsIjoiaGFzc2FhbnFAZ21haWwuY29tIn0.St1Wb53NR6k1ZbIOstVAZ7KF4kztqeJ0Au0CXcO7PHlu8KlTduzKBVq2hUju2Mq-kDZlE9toPgfc0x0oDPo1ISSpKHOQ5AuXeu5NY1HWtUqXUhH_0JlYO8T6YqXseTKVUKUgqCmACmxvWw0SjJ1CL2tp7UpUoqXMHL03mBhwzOvd5tHY__dxWpHYztEkVbuFe3lrrjvHok8wTHdScre4li7347WNgfV4P2LyfJITyTst2ooAudbC2Ka4lmTqmghBRFRmuH5EKOSq2Tk2VpOREz86tS2joL0AaJqBAMVRdMvqsRdlFJuhIMcp-hWf9tiBf2m1wv5Uk9wIwpL_0HkZIA';
 
 // Function to update the bearer token
 export const updateBearerToken = (newToken) => {
@@ -447,6 +447,62 @@ export const changePassword = async (newPassword) => {
       } catch (error) {
     console.error('Error changing password:', error);
     throw new Error('Failed to update password. Please try again.');
+  }
+};
+
+// Function to get user permissions
+export const getUserPermissions = async (username) => {
+  try {
+    const response = await api.post('/keycloak/get_user_permissions', {
+      username: username
+    });
+    return response;
+  } catch (error) {
+    console.error('Error fetching user permissions:', error);
+    throw error;
+  }
+};
+
+// Function to set user permissions
+export const setUserPermissions = async (username, resourceName, grant = true) => {
+  try {
+    const response = await api.post('/keycloak/set_user_permissions', {
+      username: username,
+      resource_name: resourceName,
+      grant: grant
+    });
+    return response;
+  } catch (error) {
+    console.error('Error setting user permissions:', error);
+    throw error;
+  }
+};
+
+// Function to assign permissions to a user (bulk permission assignment)
+export const assignPermissions = async (username, resources) => {
+  try {
+    const response = await api.post('/keycloak/assign_permission', {
+      username: username,
+      resources: resources
+    });
+    return response;
+  } catch (error) {
+    console.error('Error assigning permissions:', error);
+    throw error;
+  }
+};
+
+// Function to unassign permissions from a user (bulk permission removal)
+export const unassignPermissions = async (username, resourceNames) => {
+  try {
+    const response = await api.post('/keycloak/unassign_permission', {
+      username: username,
+      resource_names: resourceNames
+    });
+    return response;
+  } catch (error) {
+    console.error('Error unassigning permissions:', error);
+    throw error;
   }
 };
 
