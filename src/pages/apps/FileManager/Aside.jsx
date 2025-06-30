@@ -13,10 +13,6 @@ const Aside = ({show,setShow}) => {    const menu = [
             text: "Newly Added",
         },
         {
-            icon:"star",
-            text: "Starred",
-        },
-        {
             icon:"share-alt",
             text: "Shared",
         },
