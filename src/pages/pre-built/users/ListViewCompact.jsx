@@ -974,6 +974,17 @@ const UsersListCompactPage = () => {
                     />
                 </div>
                 <div className="mb-3">
+                    <label className="block mb-1">Password</label>
+                    <input
+                        name="password"
+                        type="password"
+                        required
+                        className="border rounded p-2 w-full"
+                        value={newUser.password || ''}
+                        onChange={e => setNewUser({ ...newUser, password: e.target.value })}
+                    />
+                </div>
+                <div className="mb-3">
                 <label className="block mb-1">First Name</label>
                 {/* <input name="firstName" required className="border rounded p-2 w-full" /> */}
                 <input
