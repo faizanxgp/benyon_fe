@@ -10,11 +10,7 @@ const Aside = ({show,setShow}) => {    const menu = [
         },
         {
             icon:"file-docs",
-            text: "Newly Added",
-        },
-        {
-            icon:"share-alt",
-            text: "Shared",
+            text: "Recently Uploaded",
         },
     ]
     
@@ -44,16 +40,7 @@ const Aside = ({show,setShow}) => {    const menu = [
                     })}
                 </ul>
 
-                <div className="mt-24">
-                    <div className="p-7">
-                        <h6 className="font-heading text-sm/tighter font-bold -tracking-snug text-slate-600 mb-4 flex items-center">
-                            <Icon className="text-xl/none me-4" name="hard-drive" /><span>Storage</span>
-                        </h6>
-                        <Progress>
-                            <Progress.Bar variant="primary" progress="5%" />
-                        </Progress>                        <div className="text-xs font-medium text-slate-400 mt-4">12.47 GB of 50 GB used</div>
-                    </div>
-                </div>
+
             </SimpleBar>
         </div>
         <div onClick={()=> setShow(false)} className="class-toggle fixed inset-0 bg-slate-950 bg-opacity-20 z-[900] opacity-0 invisible peer-[.active]:opacity-100 peer-[.active]:visible lg:!opacity-0 lg:!invisible"></div>
