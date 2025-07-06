@@ -3,7 +3,7 @@ import React, {Fragment, useEffect, useState} from 'react'
 import slideUp from '../../utilities/slideUp';
 import slideDown from '../../utilities/slideDown';
 import getParents from '../../utilities/getParents';
-import { getDashboardHeading } from '../../services/api';
+import { getDashboardHeading, isAdmin } from '../../services/api';
 
 import { NavLink, useLocation } from "react-router-dom";
 
@@ -17,190 +17,134 @@ import { NavLink, useLocation } from "react-router-dom";
 // ]
 
 // Dynamic menuData function
-const getMenuData = (dashboardHeading) => [
-    { heading: dashboardHeading },
-    // { icon: "cart", text: "Ecommerce", link: "/ecommerce" },
-    // { icon: "edit-alt", text: "AI Copywriter", link: "/copywriter" },
-    // { icon: "cc-alt2", text: "Sales", link: "/sales" },
-    // { icon: "bitcoin-cash", text: "Crypto", link: "/crypto" },
-    { icon: "growth", text: "Analytics", link: "/analytics" },
-    // { icon: "coins", text: "Invest", link: "/invest" },    
-    // { heading: "Pre-Built Pages" },
-    // { 
-    //     icon: "tile-thumb", text: "Projects", link: "#",
-    //     sub: [
-    //         { text:"Project Cards", link: "/project-card" },
-    //         { text:"Project List", link: "/project-list" }
-    //     ]
-    // },    
-    // {
-    //     icon: "users", text: "User Manage", link: "#",
-    //     sub: [
-    //         { text:"User List - Regular", link: "/user-list-regular" },
-    //         { text:"User List - Compact", link: "/user-list-compact" },
-    //         { text:"User Details - Regular", link: "/user-details/1" },
-    //         { text:"User Profile - Regular", link: "/user-profile-regular" },
-    //         { text:"User Contact - Card", link: "/user-card" }
-    //     ]
-    // },  
-    // {
-    //     icon: "user-list", text: "Customers", link: "#",
-    //     sub: [
-    //         { text:"Customer List", link: "/customer-list" },
-    //         { text:"Customer Details", link: "/customer-details/1" }
-    //     ]
-    // },
-    // {
-    //     icon: "file-docs", text: "AML / KYCs", link: "#",
-    //     sub: [
-    //         { text:"KYC List - Regular", link: "/kyc-list" },
-    //         { text:"KYC Details - Regular", link: "/kyc-details/UD01544" }
-    //     ]
-    // },
-    // {
-    //     icon: "grid-alt", text: "Applications", link: "#",
-    //     sub: [
-    //         { text:"Messages",link: "/apps-messages" },
-    //         { text:"Inbox / Mail",link: "/apps-inbox" },
-    //         { text:"File Manager",link: "/apps-file-manager" },
-    //         { text:"Chats / Messenger", link: "/apps-chats" },
-    //         { text:"Calendar", link: "/apps-calendar" }
-    //     ]
-    // },   
-    // {
-    //     icon: "file-docs", text: "Invoice", link: "#",
-    //     sub: [
-    //         { text:"Invoice List", link: "/invoice-list" },
-    //         { text:"Invoice Details", link: "/invoice-details/1" }
-    //     ]
-    // },  
-    // {
-    //     icon: "card-view", text: "Products", link: "#",
-    //     sub: [
-    //         { text:"Product List", link: "/product-list" },
-    //         { text:"Product Card", link: "/product-card" },
-    //         { text:"Product Details", link: "/product-details/1" }
-    //     ]
-    // },  
-    // { icon: "view-col", text: "Pricing Table", link: "/pricing-table" }, 
-    // { icon: "img", text: "Image Gallery", link: "/gallery" },     
-      { icon: "users", text: "User Management", link: "/user-list-compact" },
-    { icon: "file-docs", text: "Document Management", link: "/apps-file-manager" },
-    // { icon: "signin", text: "Login", link: "/auths/auth-login-v2" }, // Removed: No login link needed for authenticated users
+const getMenuData = (dashboardHeading) => {
+    const admin = isAdmin();
+    return [
+        { heading: dashboardHeading },
+        // { icon: "cart", text: "Ecommerce", link: "/ecommerce" },
+        // { icon: "edit-alt", text: "AI Copywriter", link: "/copywriter" },
+        // { icon: "cc-alt2", text: "Sales", link: "/sales" },
+        // { icon: "bitcoin-cash", text: "Crypto", link: "/crypto" },
+        ...(admin ? [
+            { icon: "growth", text: "Analytics", link: "/analytics" },
+            { icon: "users", text: "User Management", link: "/user-list-compact" }
+        ] : []),
+        { icon: "file-docs", text: "Document Management", link: "/apps-file-manager" },
+        // { icon: "signin", text: "Login", link: "/auths/auth-login-v2" }, // Removed: No login link needed for authenticated users
 
-    // { heading: "Misc Pages" },
-    // {
-    //     icon: "signin", text: "Auth Pages", link: "#",
-    //     sub: [
-    //         { text:"Login / Signin", link: "/auths/auth-login", blank:'true' },
-    //         { text:"Register / Signup", link: "/auths/auth-register", blank:'true'  },
-    //         { text:"Forgot Password", link: "/auths/auth-reset", blank:'true'  },
-    //         { text:"Success / Confirm", link: "/auths/auth-success", blank:'true'  },
-    //         { 
-    //             text:"Classic Version - v2", link: "#",
-    //             sub: [
-    //                 { text:"Login / Signin", link: "/auths/auth-login-v2", blank:'true' },
-    //                 { text:"Register / Signup", link: "/auths/auth-register-v2", blank:'true' },
-    //                 { text:"Forgot Password", link: "/auths/auth-reset-v2", blank:'true' },
-    //                 { text:"Success / Confirm", link: "/auths/auth-success-v2", blank:'true' }
-    //             ] 
-    //         },
-    //         { 
-    //             text:"No Slider Version - v3", link: "#",
-    //             sub: [
-    //                 { text:"Login / Signin", link: "/auths/auth-login-v3", blank:'true' },
-    //                 { text:"Register / Signup", link: "/auths/auth-register-v3", blank:'true' },
-    //                 { text:"Forgot Password", link: "/auths/auth-reset-v3", blank:'true' },
-    //                 { text:"Success / Confirm", link: "/auths/auth-success-v3", blank:'true' }
-    //             ]
-    //         }
-    //     ]
-    // }, 
-    // {
-    //     icon: "files", text: "Error Pages", link: "#",
-    //     sub: [
-    //         { text:"404 Classic", link: "/errors/404-classic", blank:'true' },
-    //         { text:"504 Classic", link: "/errors/504-classic", blank:'true' },
-    //         { text:"404 Modern", link: "/errors/404-modern", blank:'true' },
-    //         { text:"504 Modern", link: "/errors/504-modern", blank:'true' }
-    //     ]
-    // }, 
-    // {
-    //     icon: "files", text: "Other Pages", link: "#",
-    //     sub: [
-    //         { text:"Blank / Startup", link: "/_blank" },
-    //         { text:"Faqs / Help", link: "/faqs" },
-    //         { text:"Terms / Policy", link: "/terms-policy" },
-    //         { text:"Regular Page - v1", link: "/regular-v1" },
-    //         { text:"Regular Page - v2", link: "/regular-v2" }
-    //     ]
-    // }, 
-    // { heading: "Components" },
-    // {
-    //     icon: "layers", text: "Ui Elements", link: "#",
-    //     sub: [
-    //         { text:"Alerts", link: "/components/elements/alerts" },
-    //         { text:"Accordions", link: "/components/elements/accordions" },
-    //         { text:"Avatar", link: "/components/elements/avatar" },
-    //         { text:"Badges", link: "/components/elements/badges" },
-    //         { text:"Buttons", link: "/components/elements/buttons" },
-    //         { text:"Button Group", link: "/components/elements/buttons-group" },
-    //         { text:"Breadcrumb", link: "/components/elements/breadcrumb" },
-    //         { text:"Cards", link: "/components/elements/cards" },
-    //         { text:"List Dropdown", link: "/components/elements/list-dropdown" },
-    //         { text:"Modals", link: "/components/elements/modals" },
-    //         { text:"Pagination", link: "/components/elements/pagination" },
-    //         { text:"Popovers", link: "/components/elements/popover" },
-    //         { text:"Progress", link: "/components/elements/progress" },
-    //         { text:"Spinner", link: "/components/elements/spinner" },
-    //         { text:"Tabs", link: "/components/elements/tabs" },
-    //         { text:"Toasts", link: "/components/elements/toast" },
-    //         { text:"Tooltip", link: "/components/elements/tooltip" },
-    //         { text:"Typography", link: "/components/elements/typography" }
-    //     ]
-    // },  
-    // {
-    //     icon: "card-view", text: "Forms", link: "#",
-    //     sub: [
-    //         { text:"Form Elements", link: "/components/forms/form-elements" },
-    //         { text:"Checkbox Radio", link: "/components/forms/checkbox-radio" },
-    //         { text:"Advanced Controls", link: "/components/forms/advanced-controls" },
-    //         { text:"Input Group", link: "/components/forms/input-group" },
-    //         { text:"Form Upload", link: "/components/forms/form-upload" },
-    //         { text:"Date & Time Picker", link: "/components/forms/datetime-picker" },
-    //         { text:"Number Spinner", link: "/components/forms/number-spinner" },
-    //         { text:"noUiSlider", link: "/components/forms/nouislider" },
-    //         { text:"Form Layouts", link: "/components/forms/form-layouts" },
-    //         { text:"Form Validation", link: "/components/forms/form-validation" }
-    //     ]
-    // }, 
-    // { icon: "tailwind", text: "Tailwind Config", link: "/components/tailwind-config" }, 
-    // {
-    //     icon: "dot-box", text: "Crafted Icons", link: "#",
-    //     sub: [
-    //         { text:"SVG Icon - Exclusive", link: "/components/svg-icons" },
-    //         { text:"Nioicon - HandCrafted", link: "/components/nioicon" }
-    //     ]
-    // }, 
-    // {
-    //     icon: "table-view", text: "Tables", link: "#",
-    //     sub: [
-    //         { text:"Basic Tables", link: "/components/tables/basic-table" },
-    //         { text:"DataTables", link: "/components/tables/data-table" }
-    //     ]
-    // }, 
-    // {
-    //     icon: "puzzle", text: "Widgets", link: "#",
-    //     sub: [
-    //         { text:"Card Widgets", link: "/components/widgets/cards" },
-    //         { text:"Chart Widgets", link: "/components/widgets/charts" },
-    //         { text:"Ratings Widgets", link: "/components/widgets/ratings" }
-    //     ]
-    // }, 
-    // {
-    //     icon: "pie", text: "Chart JS", link: "/components/chartjs"
-    // }
-];
+        // { heading: "Misc Pages" },
+        // {
+        //     icon: "signin", text: "Auth Pages", link: "#",
+        //     sub: [
+        //         { text:"Login / Signin", link: "/auths/auth-login", blank:'true' },
+        //         { text:"Register / Signup", link: "/auths/auth-register", blank:'true'  },
+        //         { text:"Forgot Password", link: "/auths/auth-reset", blank:'true'  },
+        //         { text:"Success / Confirm", link: "/auths/auth-success", blank:'true'  },
+        //         { 
+        //             text:"Classic Version - v2", link: "#",
+        //             sub: [
+        //                 { text:"Login / Signin", link: "/auths/auth-login-v2", blank:'true' },
+        //                 { text:"Register / Signup", link: "/auths/auth-register-v2", blank:'true' },
+        //                 { text:"Forgot Password", link: "/auths/auth-reset-v2", blank:'true' },
+        //                 { text:"Success / Confirm", link: "/auths/auth-success-v2", blank:'true' }
+        //             ] 
+        //         },
+        //         { 
+        //             text:"No Slider Version - v3", link: "#",
+        //             sub: [
+        //                 { text:"Login / Signin", link: "/auths/auth-login-v3", blank:'true' },
+        //                 { text:"Register / Signup", link: "/auths/auth-register-v3", blank:'true' },
+        //                 { text:"Forgot Password", link: "/auths/auth-reset-v3", blank:'true' },
+        //                 { text:"Success / Confirm", link: "/auths/auth-success-v3", blank:'true' }
+        //             ]
+        //         }
+        //     ]
+        // }, 
+        // {
+        //     icon: "files", text: "Error Pages", link: "#",
+        //     sub: [
+        //         { text:"404 Classic", link: "/errors/404-classic", blank:'true' },
+        //         { text:"504 Classic", link: "/errors/504-classic", blank:'true' },
+        //         { text:"404 Modern", link: "/errors/404-modern", blank:'true' },
+        //         { text:"504 Modern", link: "/errors/504-modern", blank:'true' }
+        //     ]
+        // }, 
+        // {
+        //     icon: "files", text: "Other Pages", link: "#",
+        //     sub: [
+        //         { text:"Blank / Startup", link: "/_blank" },
+        //         { text:"Faqs / Help", link: "/faqs" },
+        //         { text:"Terms / Policy", link: "/terms-policy" },
+        //         { text:"Regular Page - v1", link: "/regular-v1" },
+        //         { text:"Regular Page - v2", link: "/regular-v2" }
+        //     ]
+        // }, 
+        // { heading: "Components" },
+        // {
+        //     icon: "layers", text: "Ui Elements", link: "#",
+        //     sub: [
+        //         { text:"Alerts", link: "/components/elements/alerts" },
+        //         { text:"Accordions", link: "/components/elements/accordions" },
+        //         { text:"Avatar", link: "/components/elements/avatar" },
+        //         { text:"Badges", link: "/components/elements/badges" },
+        //         { text:"Buttons", link: "/components/elements/buttons" },
+        //         { text:"Button Group", link: "/components/elements/buttons-group" },
+        //         { text:"Breadcrumb", link: "/components/elements/breadcrumb" },
+        //         { text:"Cards", link: "/components/elements/cards" },
+        //         { text:"List Dropdown", link: "/components/elements/list-dropdown" },
+        //         { text:"Modals", link: "/components/elements/modals" },
+        //         { text:"Pagination", link: "/components/elements/pagination" },
+        //         { text:"Popovers", link: "/components/elements/popover" },
+        //         { text:"Progress", link: "/components/elements/progress" },
+        //         { text:"Spinner", link: "/components/elements/spinner" },
+        //         { text:"Tabs", link: "/components/elements/tabs" },
+        //         { text:"Toasts", link: "/components/elements/toast" },
+        //         { text:"Tooltip", link: "/components/elements/typography" }
+        //     ]
+        // },  
+        // {
+        //     icon: "card-view", text: "Forms", link: "#",
+        //     sub: [
+        //         { text:"Form Elements", link: "/components/forms/form-elements" },
+        //         { text:"Checkbox Radio", link: "/components/forms/checkbox-radio" },
+        //         { text:"Advanced Controls", link: "/components/forms/advanced-controls" },
+        //         { text:"Input Group", link: "/components/forms/input-group" },
+        //         { text:"Form Upload", link: "/components/forms/form-upload" },
+        //         { text:"Date & Time Picker", link: "/components/forms/datetime-picker" },
+        //         { text:"Number Spinner", link: "/components/forms/number-spinner" },
+        //         { text:"noUiSlider", link: "/components/forms/nouislider" },
+        //         { text:"Form Layouts", link: "/components/forms/form-layouts" },
+        //         { text:"Form Validation", link: "/components/forms/form-validation" }
+        //     ]
+        // }, 
+        // { icon: "tailwind", text: "Tailwind Config", link: "/components/tailwind-config" }, 
+        // {
+        //     icon: "dot-box", text: "Crafted Icons", link: "#",
+        //     sub: [
+        //         { text:"SVG Icon - Exclusive", link: "/components/svg-icons" },
+        //         { text:"Nioicon - HandCrafted", link: "/components/nioicon" }
+        //     ]
+        // }, 
+        // {
+        //     icon: "table-view", text: "Tables", link: "#",
+        //     sub: [
+        //         { text:"Basic Tables", link: "/components/tables/basic-table" },
+        //         { text:"DataTables", link: "/components/tables/data-table" }
+        //     ]
+        // }, 
+        // {
+        //     icon: "puzzle", text: "Widgets", link: "#",
+        //     sub: [
+        //         { text:"Card Widgets", link: "/components/widgets/cards" },
+        //         { text:"Chart Widgets", link: "/components/widgets/charts" },
+        //         { text:"Ratings Widgets", link: "/components/widgets/ratings" }
+        //     ]
+        // }, 
+        // {
+        //     icon: "pie", text: "Chart JS", link: "/components/chartjs"
+        // }
+    ];
+};
 
 const Menu = ({setSidebarVisibility}) => {
     const location = useLocation();
